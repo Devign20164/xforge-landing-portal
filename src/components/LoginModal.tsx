@@ -9,9 +9,10 @@ import { useState } from "react";
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onLoginSuccess?: () => void;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -37,11 +38,22 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     // Simulate login process
     setTimeout(() => {
       setIsLoading(false);
+      
+      // Store login state in localStorage
+      localStorage.setItem("isLoggedIn", "true");
+      
       toast({
         title: "Login successful",
         description: "Welcome back to XForge!",
       });
+      
+      // Invoke login success callback
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
+      
       onClose();
+      
       // Reset form
       setEmail("");
       setPassword("");

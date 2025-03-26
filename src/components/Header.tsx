@@ -1,18 +1,36 @@
 
 import React, { useState, useEffect } from "react";
+import { Bell, ChevronDown } from "lucide-react";
 import LoginModal from "./LoginModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [points, setPoints] = useState(325);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
 
+    // Check if user is logged in from localStorage
+    const checkAuth = () => {
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      setIsAuthenticated(isLoggedIn);
+    };
+
     window.addEventListener("scroll", handleScroll);
+    checkAuth();
+    
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -21,6 +39,33 @@ const Header: React.FC = () => {
     setIsLoginModalOpen(true);
     setIsMobileMenuOpen(false);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    setIsAuthenticated(false);
+  };
+
+  // Navigation items based on authentication state
+  const getNavItems = () => {
+    if (isAuthenticated) {
+      return [
+        { name: "Home", href: "#home" },
+        { name: "Products", href: "#products" },
+        { name: "Experience", href: "#experience" },
+        { name: "Promo Codes", href: "#promocodes" },
+        { name: "Rewards", href: "#rewards" },
+      ];
+    } else {
+      return [
+        { name: "Home", href: "#home" },
+        { name: "Features", href: "#features" },
+        { name: "Campaign", href: "#campaign" },
+        { name: "Register", href: "#register" },
+      ];
+    }
+  };
+
+  const navItems = getNavItems();
 
   return (
     <>
@@ -40,16 +85,65 @@ const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden space-x-8 md:flex">
-            <a href="#home" className="nav-link">Home</a>
-            <a href="#features" className="nav-link">Features</a>
-            <a href="#campaign" className="nav-link">Campaign</a>
-            <a href="#register" className="nav-link">Register</a>
+            {navItems.map((item) => (
+              <a key={item.name} href={item.href} className="nav-link">
+                {item.name}
+              </a>
+            ))}
+            
+            {/* Points indicator for authenticated users */}
+            {isAuthenticated && (
+              <span className="nav-link">
+                <span className="text-xforge-teal">{points}</span> Points
+              </span>
+            )}
           </nav>
 
-          {/* Login/Sign Up Buttons */}
-          <div className="hidden space-x-4 md:flex">
-            <a href="#login" className="btn btn-outline" onClick={openLoginModal}>Login</a>
-            <a href="#register" className="btn btn-primary">Sign Up</a>
+          {/* Login/Sign Up or User Account */}
+          <div className="hidden space-x-4 md:flex items-center">
+            {isAuthenticated ? (
+              <>
+                {/* Notification Bell */}
+                <div className="relative">
+                  <button className="p-2 text-xforge-gray hover:text-xforge-teal transition-colors">
+                    <Bell size={20} />
+                    <span className="absolute -top-1 -right-1 bg-xforge-teal text-xforge-dark text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      2
+                    </span>
+                  </button>
+                </div>
+                
+                {/* User Account Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="btn btn-outline flex items-center">
+                    My Account <ChevronDown size={16} className="ml-1" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-xforge-dark border border-xforge-lightgray text-xforge-gray">
+                    <DropdownMenuItem className="cursor-pointer hover:text-xforge-teal">
+                      <a href="#account" className="w-full">Account Settings</a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer hover:text-xforge-teal">
+                      <a href="#rewards-history" className="w-full">Rewards History</a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer hover:text-xforge-teal">
+                      <a href="#points-history" className="w-full">Points History</a>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-xforge-lightgray" />
+                    <DropdownMenuItem 
+                      className="cursor-pointer text-destructive hover:text-destructive/90"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <>
+                <a href="#login" className="btn btn-outline" onClick={openLoginModal}>Login</a>
+                <a href="#register" className="btn btn-primary">Sign Up</a>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -72,14 +166,53 @@ const Header: React.FC = () => {
           }`}
         >
           <nav className="flex flex-col items-center space-y-6 text-lg">
-            <a href="#home" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Home</a>
-            <a href="#features" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
-            <a href="#campaign" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Campaign</a>
-            <a href="#register" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Register</a>
+            {navItems.map((item) => (
+              <a 
+                key={item.name}
+                href={item.href} 
+                className="nav-link" 
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.name}
+              </a>
+            ))}
+            
+            {/* Points indicator for authenticated users */}
+            {isAuthenticated && (
+              <span className="nav-link">
+                <span className="text-xforge-teal">{points}</span> Points
+              </span>
+            )}
           </nav>
+          
           <div className="flex flex-col items-center mt-10 space-y-4">
-            <a href="#login" className="btn btn-outline w-44 text-center" onClick={openLoginModal}>Login</a>
-            <a href="#register" className="btn btn-primary w-44 text-center" onClick={() => setIsMobileMenuOpen(false)}>Sign Up</a>
+            {isAuthenticated ? (
+              <>
+                <div className="flex items-center space-x-4">
+                  <button className="relative p-2 text-xforge-gray hover:text-xforge-teal transition-colors">
+                    <Bell size={24} />
+                    <span className="absolute -top-1 -right-1 bg-xforge-teal text-xforge-dark text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      2
+                    </span>
+                  </button>
+                  
+                  <a href="#account" className="btn btn-outline w-44 text-center">
+                    Account Settings
+                  </a>
+                </div>
+                <button 
+                  onClick={handleLogout}
+                  className="btn btn-primary w-44 text-center"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <a href="#login" className="btn btn-outline w-44 text-center" onClick={openLoginModal}>Login</a>
+                <a href="#register" className="btn btn-primary w-44 text-center" onClick={() => setIsMobileMenuOpen(false)}>Sign Up</a>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -87,7 +220,8 @@ const Header: React.FC = () => {
       {/* Login Modal */}
       <LoginModal 
         isOpen={isLoginModalOpen} 
-        onClose={() => setIsLoginModalOpen(false)} 
+        onClose={() => setIsLoginModalOpen(false)}
+        onLoginSuccess={() => setIsAuthenticated(true)}
       />
     </>
   );
