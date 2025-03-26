@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Bell, ChevronDown } from "lucide-react";
+import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import {
   DropdownMenu,
@@ -49,18 +50,18 @@ const Header: React.FC = () => {
   const getNavItems = () => {
     if (isAuthenticated) {
       return [
-        { name: "Home", href: "#home" },
-        { name: "Products", href: "#products" },
-        { name: "Experience", href: "#experience" },
-        { name: "Promo Codes", href: "#promocodes" },
-        { name: "Rewards", href: "#rewards" },
+        { name: "Home", href: "/" },
+        { name: "Products", href: "/products" },
+        { name: "Experience", href: "/experience" },
+        { name: "Promo Codes", href: "/promocodes" },
+        { name: "Rewards", href: "/rewards" },
       ];
     } else {
       return [
-        { name: "Home", href: "#home" },
-        { name: "Features", href: "#features" },
-        { name: "Campaign", href: "#campaign" },
-        { name: "Register", href: "#register" },
+        { name: "Home", href: "/" },
+        { name: "Features", href: "/#features" },
+        { name: "Campaign", href: "/#campaign" },
+        { name: "Register", href: "/#register" },
       ];
     }
   };
@@ -78,17 +79,17 @@ const Header: React.FC = () => {
       >
         <div className="container flex items-center justify-between">
           <div className="flex items-center">
-            <a href="#" className="text-2xl font-bold text-white">
+            <Link to="/" className="text-2xl font-bold text-white">
               <span className="text-xforge-teal">X</span>Forge
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden space-x-8 md:flex">
             {navItems.map((item) => (
-              <a key={item.name} href={item.href} className="nav-link">
+              <Link key={item.name} to={item.href} className="nav-link">
                 {item.name}
-              </a>
+              </Link>
             ))}
             
             {/* Points indicator for authenticated users */}
@@ -120,13 +121,13 @@ const Header: React.FC = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-xforge-dark border border-xforge-lightgray text-xforge-gray">
                     <DropdownMenuItem className="cursor-pointer hover:text-xforge-teal">
-                      <a href="#account" className="w-full">Account Settings</a>
+                      <Link to="#account" className="w-full">Account Settings</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="cursor-pointer hover:text-xforge-teal">
-                      <a href="#rewards-history" className="w-full">Rewards History</a>
+                      <Link to="#rewards-history" className="w-full">Rewards History</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="cursor-pointer hover:text-xforge-teal">
-                      <a href="#points-history" className="w-full">Points History</a>
+                      <Link to="#points-history" className="w-full">Points History</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-xforge-lightgray" />
                     <DropdownMenuItem 
@@ -141,7 +142,7 @@ const Header: React.FC = () => {
             ) : (
               <>
                 <a href="#login" className="btn btn-outline" onClick={openLoginModal}>Login</a>
-                <a href="#register" className="btn btn-primary">Sign Up</a>
+                <Link to="/#register" className="btn btn-primary">Sign Up</Link>
               </>
             )}
           </div>
@@ -167,14 +168,14 @@ const Header: React.FC = () => {
         >
           <nav className="flex flex-col items-center space-y-6 text-lg">
             {navItems.map((item) => (
-              <a 
+              <Link
                 key={item.name}
-                href={item.href} 
+                to={item.href}
                 className="nav-link" 
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
             
             {/* Points indicator for authenticated users */}
@@ -196,9 +197,9 @@ const Header: React.FC = () => {
                     </span>
                   </button>
                   
-                  <a href="#account" className="btn btn-outline w-44 text-center">
+                  <Link to="#account" className="btn btn-outline w-44 text-center">
                     Account Settings
-                  </a>
+                  </Link>
                 </div>
                 <button 
                   onClick={handleLogout}
@@ -210,7 +211,7 @@ const Header: React.FC = () => {
             ) : (
               <>
                 <a href="#login" className="btn btn-outline w-44 text-center" onClick={openLoginModal}>Login</a>
-                <a href="#register" className="btn btn-primary w-44 text-center" onClick={() => setIsMobileMenuOpen(false)}>Sign Up</a>
+                <Link to="/#register" className="btn btn-primary w-44 text-center" onClick={() => setIsMobileMenuOpen(false)}>Sign Up</Link>
               </>
             )}
           </div>
