@@ -1,5 +1,6 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,13 @@ const Register: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState({ text: "", type: "" });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    setIsAuthenticated(isLoggedIn);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -91,6 +99,35 @@ const Register: React.FC = () => {
     }, 1500);
   };
 
+  // If user is already logged in, don't show the registration form
+  if (isAuthenticated) {
+    return (
+      <section id="register" className="section bg-gradient-to-b from-xforge-dark to-black relative overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-20">
+          <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full bg-xforge-teal blur-[120px] animate-pulse-light"></div>
+        </div>
+        
+        <div className="container relative z-10 py-20">
+          <div className="max-w-4xl mx-auto text-center">
+            <span className="inline-block px-4 py-1 mb-4 text-sm font-semibold tracking-wider uppercase rounded-full bg-xforge-teal bg-opacity-20 text-xforge-teal">
+              Already a Member
+            </span>
+            <h2 className="mb-4 text-3xl font-bold md:text-4xl text-white">
+              Welcome to <span className="text-xforge-teal">XForge</span>
+            </h2>
+            <p className="max-w-2xl mx-auto text-xforge-lightgray mb-8">
+              You're already logged in to your XForge account. Explore our products and enjoy the exclusive benefits.
+            </p>
+            <Link to="/products" className="btn btn-primary">
+              Browse Products
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Regular registration form for non-authenticated users
   return (
     <section id="register" className="section bg-gradient-to-b from-xforge-dark to-black relative overflow-hidden">
       {/* Background Elements */}

@@ -10,6 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useNotifications } from "@/context/NotificationsContext";
+import NotificationsDropdown from "./NotificationsDropdown";
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -17,6 +19,8 @@ const Header: React.FC = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [points, setPoints] = useState(325);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const { unreadCount } = useNotifications();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,13 +50,30 @@ const Header: React.FC = () => {
     setIsAuthenticated(false);
   };
 
+  const toggleNotifications = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsNotificationsOpen(!isNotificationsOpen);
+  };
+
+  // Close notifications when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (isNotificationsOpen) {
+        setIsNotificationsOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isNotificationsOpen]);
+
   // Navigation items based on authentication state
   const getNavItems = () => {
     if (isAuthenticated) {
       return [
         { name: "Home", href: "/" },
         { name: "Products", href: "/products" },
-        { name: "Experience", href: "/experience" },
+        { name: "News", href: "/news" },
         { name: "Promo Codes", href: "/promocodes" },
         { name: "Rewards", href: "/rewards" },
       ];
@@ -105,13 +126,22 @@ const Header: React.FC = () => {
             {isAuthenticated ? (
               <>
                 {/* Notification Bell */}
-                <div className="relative">
-                  <button className="p-2 text-xforge-gray hover:text-xforge-teal transition-colors">
+                <div className="relative" onClick={toggleNotifications}>
+                  <button 
+                    className="p-2 text-xforge-gray hover:text-xforge-teal transition-colors"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Bell size={20} />
-                    <span className="absolute -top-1 -right-1 bg-xforge-teal text-xforge-dark text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      2
-                    </span>
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-xforge-teal text-xforge-dark text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {unreadCount}
+                      </span>
+                    )}
                   </button>
+                  <NotificationsDropdown 
+                    isOpen={isNotificationsOpen}
+                    onClose={() => setIsNotificationsOpen(false)}
+                  />
                 </div>
                 
                 {/* User Account Dropdown */}
@@ -190,11 +220,16 @@ const Header: React.FC = () => {
             {isAuthenticated ? (
               <>
                 <div className="flex items-center space-x-4">
-                  <button className="relative p-2 text-xforge-gray hover:text-xforge-teal transition-colors">
+                  <button 
+                    className="relative p-2 text-xforge-gray hover:text-xforge-teal transition-colors"
+                    onClick={toggleNotifications}
+                  >
                     <Bell size={24} />
-                    <span className="absolute -top-1 -right-1 bg-xforge-teal text-xforge-dark text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      2
-                    </span>
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-xforge-teal text-xforge-dark text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {unreadCount}
+                      </span>
+                    )}
                   </button>
                   
                   <Link to="#account" className="btn btn-outline w-44 text-center">
