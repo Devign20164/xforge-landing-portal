@@ -9,6 +9,7 @@ import Products from "./pages/Products";
 import News from "./pages/News";
 import PromoCodes from "./pages/PromoCodes";
 import Rewards from "./pages/Rewards";
+import AccountSettings from "./pages/AccountSettings";
 import NotFound from "./pages/NotFound";
 import { NotificationsProvider } from "./context/NotificationsContext";
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/news" element={<News />} />
             <Route path="/promocodes" element={<PromoCodes />} />
             <Route path="/rewards" element={<Rewards />} />
+            <Route path="/account" element={<AccountSettings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

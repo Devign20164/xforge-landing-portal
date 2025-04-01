@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Bell, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -27,7 +26,6 @@ const Header: React.FC = () => {
       setIsScrolled(window.scrollY > 20);
     };
 
-    // Check if user is logged in from localStorage
     const checkAuth = () => {
       const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
       setIsAuthenticated(isLoggedIn);
@@ -55,7 +53,6 @@ const Header: React.FC = () => {
     setIsNotificationsOpen(!isNotificationsOpen);
   };
 
-  // Close notifications when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       if (isNotificationsOpen) {
@@ -67,7 +64,6 @@ const Header: React.FC = () => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [isNotificationsOpen]);
 
-  // Navigation items based on authentication state
   const getNavItems = () => {
     if (isAuthenticated) {
       return [
@@ -105,7 +101,6 @@ const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
           <nav className="hidden space-x-8 md:flex">
             {navItems.map((item) => (
               <Link key={item.name} to={item.href} className="nav-link">
@@ -113,7 +108,6 @@ const Header: React.FC = () => {
               </Link>
             ))}
             
-            {/* Points indicator for authenticated users */}
             {isAuthenticated && (
               <span className="nav-link">
                 <span className="text-xforge-teal">{points}</span> Points
@@ -121,11 +115,9 @@ const Header: React.FC = () => {
             )}
           </nav>
 
-          {/* Login/Sign Up or User Account */}
           <div className="hidden space-x-4 md:flex items-center">
             {isAuthenticated ? (
               <>
-                {/* Notification Bell */}
                 <div className="relative" onClick={toggleNotifications}>
                   <button 
                     className="p-2 text-xforge-gray hover:text-xforge-teal transition-colors"
@@ -144,14 +136,13 @@ const Header: React.FC = () => {
                   />
                 </div>
                 
-                {/* User Account Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger className="btn btn-outline flex items-center">
                     My Account <ChevronDown size={16} className="ml-1" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-xforge-dark border border-xforge-lightgray text-xforge-gray">
                     <DropdownMenuItem className="cursor-pointer hover:text-xforge-teal">
-                      <Link to="#account" className="w-full">Account Settings</Link>
+                      <Link to="/account" className="w-full">Account Settings</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="cursor-pointer hover:text-xforge-teal">
                       <Link to="#rewards-history" className="w-full">Rewards History</Link>
@@ -177,7 +168,6 @@ const Header: React.FC = () => {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button 
             className="p-2 md:hidden" 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -190,7 +180,6 @@ const Header: React.FC = () => {
           </button>
         </div>
 
-        {/* Mobile Menu */}
         <div 
           className={`fixed inset-0 z-40 flex flex-col pt-24 pb-8 md:hidden bg-xforge-dark bg-opacity-95 backdrop-blur transition-transform duration-300 ease-in-out ${
             isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
@@ -208,7 +197,6 @@ const Header: React.FC = () => {
               </Link>
             ))}
             
-            {/* Points indicator for authenticated users */}
             {isAuthenticated && (
               <span className="nav-link">
                 <span className="text-xforge-teal">{points}</span> Points
@@ -232,7 +220,7 @@ const Header: React.FC = () => {
                     )}
                   </button>
                   
-                  <Link to="#account" className="btn btn-outline w-44 text-center">
+                  <Link to="/account" className="btn btn-outline w-44 text-center">
                     Account Settings
                   </Link>
                 </div>
@@ -253,7 +241,6 @@ const Header: React.FC = () => {
         </div>
       </header>
 
-      {/* Login Modal */}
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)}
