@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
+import { toast } from 'sonner';
 
 type Notification = {
   id: string;
@@ -31,7 +32,7 @@ export const useNotifications = () => {
 
 export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
 
   useEffect(() => {
     // Load notifications from localStorage on mount
@@ -56,6 +57,14 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
           read: false,
           date: new Date().toISOString(),
           type: 'promotion'
+        },
+        {
+          id: '3',
+          title: 'Points Awarded',
+          message: 'You\'ve earned 100 points for creating your account!',
+          read: false,
+          date: new Date().toISOString(),
+          type: 'points'
         }
       ];
       setNotifications(defaultNotifications);
@@ -94,10 +103,15 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     
     setNotifications(prev => [newNotification, ...prev]);
     
-    // Show toast for new notification
-    toast({
+    // Show toast for new notification - using both toast systems for flexibility
+    uiToast({
       title: notification.title,
       description: notification.message,
+    });
+    
+    toast(notification.title, {
+      description: notification.message,
+      position: 'top-right',
     });
   };
 

@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDistanceToNow } from 'date-fns';
-import { Bell, X, CheckCheck } from 'lucide-react';
+import { Bell, X, CheckCheck, Info, Gift, Tag } from 'lucide-react';
 import { useNotifications } from '@/context/NotificationsContext';
 
 interface NotificationsDropdownProps {
@@ -12,20 +12,41 @@ interface NotificationsDropdownProps {
 
 const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ isOpen, onClose }) => {
   const { notifications, markAsRead, markAllAsRead } = useNotifications();
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
-  const getTypeColor = (type: string) => {
+  const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'promotion': return 'bg-pink-500';
-      case 'points': return 'bg-green-500';
-      case 'system': return 'bg-xforge-teal';
-      default: return 'bg-gray-500';
+      case 'promotion': return <Tag className="h-5 w-5 text-pink-400" />;
+      case 'points': return <Gift className="h-5 w-5 text-green-400" />;
+      case 'system': return <Info className="h-5 w-5 text-xforge-teal" />;
+      default: return <Bell className="h-5 w-5 text-xforge-gray" />;
     }
   };
 
   return (
-    <div className="absolute top-14 right-0 w-80 bg-xforge-dark border border-xforge-lightgray rounded-lg shadow-lg z-50">
+    <div 
+      ref={dropdownRef}
+      className="absolute top-14 right-0 w-80 bg-xforge-dark border border-xforge-lightgray rounded-lg shadow-lg z-50 animate-fade-in"
+    >
       <div className="flex items-center justify-between p-4 border-b border-xforge-lightgray">
         <h3 className="text-white font-semibold">Notifications</h3>
         <div className="flex items-center gap-2">
@@ -55,7 +76,9 @@ const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ isOpen, o
                 onClick={() => markAsRead(notification.id)}
               >
                 <div className="flex items-start gap-3">
-                  <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${notification.read ? 'bg-transparent' : getTypeColor(notification.type)}`} />
+                  <div className="mt-1 flex-shrink-0">
+                    {getTypeIcon(notification.type)}
+                  </div>
                   <div className="flex-grow">
                     <div className="flex justify-between items-start">
                       <h4 className="text-white font-medium">{notification.title}</h4>

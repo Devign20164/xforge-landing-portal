@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import Features from "../components/Features";
@@ -8,7 +8,17 @@ import Register from "../components/Register";
 import Footer from "../components/Footer";
 
 const Index: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   useEffect(() => {
+    // Check if user is logged in from localStorage
+    const checkAuth = () => {
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      setIsAuthenticated(isLoggedIn);
+    };
+
+    checkAuth();
+
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function(e) {
@@ -40,7 +50,7 @@ const Index: React.FC = () => {
       <Hero />
       <Features />
       <Campaign />
-      <Register />
+      {!isAuthenticated && <Register />}
       <Footer />
     </div>
   );
