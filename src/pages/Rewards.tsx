@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import SpinWheel from "../components/SpinWheel";
-import { Award, ChevronDown, ChevronUp, Check, Gift, Star, Sparkles, Tag, Clock } from "lucide-react";
+import SlotMachine from "../components/SlotMachine";
+import { Award, ChevronDown, ChevronUp, Check, Gift, Star, Sparkles, Tag, Clock, Dices } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
 import { useNotifications } from "@/context/NotificationsContext";
@@ -10,6 +11,7 @@ import { useNotifications } from "@/context/NotificationsContext";
 const Rewards: React.FC = () => {
   const [expandedCategory, setExpandedCategory] = useState<string | null>("all");
   const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
+  const [activeGameTab, setActiveGameTab] = useState<string>("wheel");
   const { toast: uiToast } = useToast();
   const { addNotification } = useNotifications();
   
@@ -198,7 +200,54 @@ const Rewards: React.FC = () => {
           </div>
         </div>
 
-        <SpinWheel />
+        <div className="max-w-4xl mx-auto mb-16">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center p-3 bg-xforge-teal bg-opacity-20 rounded-full mb-4">
+              <Dices className="h-6 w-6 text-xforge-teal" />
+            </div>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Casino <span className="text-xforge-teal">Games</span>
+            </h2>
+            <p className="text-xforge-gray max-w-2xl mx-auto">
+              Test your luck with our casino games and win exciting rewards!
+              Play daily for more chances to win points and prizes.
+            </p>
+          </div>
+          
+          <div className="flex justify-center mb-8">
+            <div className="inline-flex bg-xforge-darkgray rounded-full p-1">
+              <button
+                className={`px-5 py-2.5 rounded-full transition-all duration-300 ${
+                  activeGameTab === 'wheel' 
+                    ? 'bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark font-bold' 
+                    : 'text-xforge-gray hover:text-white'
+                }`}
+                onClick={() => setActiveGameTab('wheel')}
+              >
+                Prize Wheel
+              </button>
+              <button
+                className={`px-5 py-2.5 rounded-full transition-all duration-300 ${
+                  activeGameTab === 'slots' 
+                    ? 'bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark font-bold' 
+                    : 'text-xforge-gray hover:text-white'
+                }`}
+                onClick={() => setActiveGameTab('slots')}
+              >
+                Slot Machine
+              </button>
+            </div>
+          </div>
+          
+          <div className="relative">
+            <div className={`transition-opacity duration-300 ${activeGameTab === 'wheel' ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}>
+              <SpinWheel />
+            </div>
+            <div className={`transition-opacity duration-300 ${activeGameTab === 'slots' ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}>
+              <SlotMachine />
+            </div>
+          </div>
+        </div>
 
         <div className="mb-10 max-w-4xl mx-auto">
           <div className="flex flex-wrap items-center justify-center gap-3">
