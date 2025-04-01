@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from "react";
-import { DollarSign, Cherry, Lemon, Diamond, SevenPointedStar, Trophy, Play } from "lucide-react";
+import { DollarSign, Apple, Citrus, Gem, Star, Trophy, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useNotifications } from "@/context/NotificationsContext";
@@ -18,9 +18,9 @@ type Symbol = {
 const SlotMachine: React.FC = () => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [symbols, setSymbols] = useState<Symbol[][]>([
-    [{ id: 0, name: "Cherry", icon: <Cherry className="h-8 w-8" />, color: "#f97316", value: 1 }],
-    [{ id: 0, name: "Cherry", icon: <Cherry className="h-8 w-8" />, color: "#f97316", value: 1 }],
-    [{ id: 0, name: "Cherry", icon: <Cherry className="h-8 w-8" />, color: "#f97316", value: 1 }]
+    [{ id: 0, name: "Cherry", icon: <Apple className="h-8 w-8" />, color: "#f97316", value: 1 }],
+    [{ id: 0, name: "Cherry", icon: <Apple className="h-8 w-8" />, color: "#f97316", value: 1 }],
+    [{ id: 0, name: "Cherry", icon: <Apple className="h-8 w-8" />, color: "#f97316", value: 1 }]
   ]);
   const [result, setResult] = useState<string | null>(null);
   const [win, setWin] = useState<number>(0);
@@ -34,10 +34,10 @@ const SlotMachine: React.FC = () => {
   
   // Define all possible symbols
   const slotSymbols: Symbol[] = [
-    { id: 0, name: "Cherry", icon: <Cherry className="h-8 w-8" />, color: "#f97316", value: 5 },
-    { id: 1, name: "Lemon", icon: <Lemon className="h-8 w-8" />, color: "#eab308", value: 10 },
-    { id: 2, name: "Seven", icon: <SevenPointedStar className="h-8 w-8" />, color: "#8b5cf6", value: 25 },
-    { id: 3, name: "Diamond", icon: <Diamond className="h-8 w-8" />, color: "#06b6d4", value: 50 },
+    { id: 0, name: "Cherry", icon: <Apple className="h-8 w-8" />, color: "#f97316", value: 5 },
+    { id: 1, name: "Lemon", icon: <Citrus className="h-8 w-8" />, color: "#eab308", value: 10 },
+    { id: 2, name: "Seven", icon: <Star className="h-8 w-8" />, color: "#8b5cf6", value: 25 },
+    { id: 3, name: "Diamond", icon: <Gem className="h-8 w-8" />, color: "#06b6d4", value: 50 },
     { id: 4, name: "Jackpot", icon: <Trophy className="h-8 w-8" />, color: "#ec4899", value: 100 },
   ];
 
