@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import SpinWheel from "../components/SpinWheel";
 import { Award, ChevronDown, ChevronUp, Check, Gift, Star, Sparkles, Tag, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
@@ -14,7 +14,6 @@ const Rewards: React.FC = () => {
   const { addNotification } = useNotifications();
   
   useEffect(() => {
-    // Add a notification when visiting the rewards page for the first time
     const hasVisitedRewards = localStorage.getItem('visited-rewards');
     if (!hasVisitedRewards) {
       setTimeout(() => {
@@ -28,18 +27,15 @@ const Rewards: React.FC = () => {
     }
   }, [addNotification]);
   
-  // User's current points (would come from a user context/state in a real app)
   const currentPoints = 325;
   
   const handleRedeemReward = (rewardName: string, pointsCost: number) => {
     if (currentPoints >= pointsCost) {
-      // Success toast
       toast.success("Reward Redeemed!", {
         description: `You've successfully redeemed ${rewardName}`,
         position: "top-center"
       });
       
-      // Add notification
       addNotification({
         title: "Reward Redeemed",
         message: `You've successfully redeemed ${rewardName} for ${pointsCost} points!`,
@@ -70,7 +66,6 @@ const Rewards: React.FC = () => {
     }
   };
   
-  // Rewards data organized by category
   const rewardCategories = [
     {
       id: "products",
@@ -101,16 +96,13 @@ const Rewards: React.FC = () => {
     }
   ];
   
-  // All rewards for the "All Rewards" view
   const allRewards = rewardCategories.flatMap(category => category.rewards);
 
-  // Rewards history
   const rewardsHistory = [
     { id: 1, name: "XForge Sticker Pack", pointsCost: 75, date: "2023-06-05" },
     { id: 2, name: "Free Shipping Voucher", pointsCost: 100, date: "2023-05-12" }
   ];
 
-  // FAQ items
   const faqItems = [
     {
       id: "faq-1",
@@ -151,7 +143,6 @@ const Rewards: React.FC = () => {
           </p>
         </div>
 
-        {/* Points Display */}
         <div className="bg-gradient-to-r from-xforge-darkgray to-[#1e2c35] rounded-2xl p-8 max-w-4xl mx-auto mb-16 shadow-2xl border border-xforge-teal/10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
@@ -175,7 +166,6 @@ const Rewards: React.FC = () => {
             </div>
           </div>
           
-          {/* Points Earning Methods */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-8">
             <div className="bg-xforge-dark/50 p-4 rounded-xl text-center border border-xforge-teal/10 hover:border-xforge-teal/30 transition-colors">
               <div className="w-10 h-10 bg-xforge-teal/10 rounded-full flex items-center justify-center mx-auto mb-2">
@@ -208,7 +198,8 @@ const Rewards: React.FC = () => {
           </div>
         </div>
 
-        {/* Category Navigation */}
+        <SpinWheel />
+
         <div className="mb-10 max-w-4xl mx-auto">
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button 
@@ -237,7 +228,6 @@ const Rewards: React.FC = () => {
           </div>
         </div>
 
-        {/* Rewards Display */}
         <div className="max-w-4xl mx-auto mb-16">
           {expandedCategory === 'all' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -342,7 +332,6 @@ const Rewards: React.FC = () => {
           )}
         </div>
 
-        {/* Reward History */}
         <div className="max-w-4xl mx-auto mb-16">
           <h2 className="text-3xl font-bold text-white mb-8 inline-block border-b-2 border-xforge-teal pb-2">
             Reward <span className="text-xforge-teal">History</span>
@@ -382,7 +371,6 @@ const Rewards: React.FC = () => {
           )}
         </div>
 
-        {/* FAQ Section */}
         <div className="max-w-3xl mx-auto mt-16">
           <h2 className="text-3xl font-bold text-white mb-8 inline-block border-b-2 border-xforge-teal pb-2">
             Frequently Asked <span className="text-xforge-teal">Questions</span>
