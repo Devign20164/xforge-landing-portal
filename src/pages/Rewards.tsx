@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import SpinWheel from "../components/SpinWheel";
 import SlotMachine from "../components/SlotMachine";
-import { Award, ChevronDown, ChevronUp, Check, Gift, Star, Sparkles, Tag, Clock, Dices } from "lucide-react";
+import { Award, ChevronDown, ChevronUp, Check, Gift, Star, Sparkles, Tag, Clock, Dices, Trophy, Target, Zap, Gamepad, Crown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
 import { useNotifications } from "@/context/NotificationsContext";
@@ -128,98 +129,148 @@ const Rewards: React.FC = () => {
     }
   ];
 
-  return (
-    <div className="min-h-screen flex flex-col bg-xforge-dark">
-      <Header />
-      <main className="flex-grow container mx-auto px-4 pt-32 pb-16">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center p-3 bg-xforge-teal bg-opacity-20 rounded-full mb-4">
-            <Award className="h-6 w-6 text-xforge-teal" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 bg-gradient-to-r from-white to-xforge-teal bg-clip-text text-transparent">
-            XForge Rewards
-          </h1>
-          <p className="text-xforge-gray max-w-2xl mx-auto">
-            Redeem your points for exclusive XForge products, discounts, and merchandise.
-            The more you engage, the more you earn!
-          </p>
-        </div>
+  const playMemoryGame = () => {
+    toast.success("Coming Soon!", {
+      description: "The Memory game will be available in our next update!",
+      position: "top-center"
+    });
+  };
 
-        <div className="bg-gradient-to-r from-xforge-darkgray to-[#1e2c35] rounded-2xl p-8 max-w-4xl mx-auto mb-16 shadow-2xl border border-xforge-teal/10">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div>
-              <h2 className="text-white font-bold text-2xl mb-3">Your Rewards Balance</h2>
-              <p className="text-xforge-gray max-w-md">
-                Redeem your points for exclusive rewards and enjoy special perks as you level up your membership.
+  const playQuizGame = () => {
+    toast.success("Coming Soon!", {
+      description: "The XForge Quiz will be available in our next update!",
+      position: "top-center"
+    });
+  };
+
+  const playDailyChallenge = () => {
+    toast.success("Coming Soon!", {
+      description: "Daily Challenges will be available in our next update!",
+      position: "top-center"
+    });
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-xforge-dark via-[#1a1f24] to-[#141b22]">
+      <Header />
+      <main className="flex-grow pb-16">
+        {/* Hero Section with Animated Background */}
+        <div className="relative pt-32 pb-16 overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 bg-[#1a1a1a] opacity-90"></div>
+            <div className="absolute top-0 left-0 w-full h-full">
+              <div className="absolute top-10 left-[10%] w-20 h-20 rounded-full bg-xforge-teal/20 blur-3xl animate-float"></div>
+              <div className="absolute top-[30%] right-[15%] w-32 h-32 rounded-full bg-[#8B5CF6]/20 blur-3xl animate-float" style={{ animationDelay: "1s" }}></div>
+              <div className="absolute bottom-[20%] left-[20%] w-40 h-40 rounded-full bg-[#F97316]/20 blur-3xl animate-float" style={{ animationDelay: "2s" }}></div>
+            </div>
+          </div>
+
+          <div className="container mx-auto relative z-10 px-4">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center p-3 bg-xforge-teal/30 rounded-full mb-4 backdrop-blur-md">
+                <Trophy className="h-6 w-6 text-xforge-teal animate-pulse-light" />
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-xforge-teal to-[#02c4af]">
+                XForge Rewards Hub
+              </h1>
+              <p className="text-xforge-gray max-w-2xl mx-auto">
+                Play games, earn points, and redeem exclusive XForge products and experiences.
+                Your journey to amazing rewards starts here!
               </p>
             </div>
-            <div className="relative">
-              <div className="absolute inset-0 bg-xforge-teal/10 blur-xl rounded-full"></div>
-              <div className="relative bg-gradient-to-br from-xforge-darkgray to-xforge-dark rounded-2xl p-8 text-center border border-xforge-teal/20">
-                <div className="flex items-baseline justify-center">
-                  <span className="text-5xl font-bold text-xforge-teal">{currentPoints}</span>
-                  <span className="text-white ml-2 text-xl">Points</span>
+
+            {/* Points Card */}
+            <div className="relative max-w-4xl mx-auto mt-8">
+              <div className="absolute inset-0 bg-gradient-to-r from-xforge-teal/20 to-[#8B5CF6]/20 blur-xl rounded-3xl"></div>
+              <div className="relative glass-dark rounded-3xl overflow-hidden border border-white/5">
+                <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-transparent z-0"></div>
+                
+                <div className="relative z-10 p-8">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div>
+                      <h2 className="text-white font-bold text-2xl mb-2">Your Rewards Balance</h2>
+                      <p className="text-xforge-gray max-w-md">
+                        Redeem your points for exclusive rewards and enjoy special perks as you level up.
+                      </p>
+                    </div>
+                    
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-xforge-teal/10 blur-xl rounded-full"></div>
+                      <div className="relative glass-teal rounded-full p-8 text-center border border-xforge-teal/30">
+                        <div className="flex items-baseline justify-center">
+                          <span className="text-5xl font-bold text-xforge-teal">{currentPoints}</span>
+                          <span className="text-white ml-2 text-xl">Points</span>
+                        </div>
+                        <div className="flex items-center justify-center mt-3 text-xforge-gray">
+                          <Sparkles className="h-4 w-4 text-xforge-teal mr-2" />
+                          <span>Silver Member</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Points Earning Methods */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
+                    <div className="bg-xforge-dark/60 backdrop-blur-sm p-5 rounded-xl text-center border border-xforge-teal/10 hover:border-xforge-teal/30 transition-all duration-300 transform hover:-translate-y-1 card-3d">
+                      <div className="w-12 h-12 bg-xforge-teal/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Tag className="h-5 w-5 text-xforge-teal" />
+                      </div>
+                      <p className="text-white font-medium mb-1">Shop Products</p>
+                      <p className="text-xforge-gray text-sm">1 Point per $1</p>
+                    </div>
+                    <div className="bg-xforge-dark/60 backdrop-blur-sm p-5 rounded-xl text-center border border-xforge-teal/10 hover:border-xforge-teal/30 transition-all duration-300 transform hover:-translate-y-1 card-3d">
+                      <div className="w-12 h-12 bg-xforge-teal/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Gift className="h-5 w-5 text-xforge-teal" />
+                      </div>
+                      <p className="text-white font-medium mb-1">Promo Codes</p>
+                      <p className="text-xforge-gray text-sm">25-100 Points</p>
+                    </div>
+                    <div className="bg-xforge-dark/60 backdrop-blur-sm p-5 rounded-xl text-center border border-xforge-teal/10 hover:border-xforge-teal/30 transition-all duration-300 transform hover:-translate-y-1 card-3d">
+                      <div className="w-12 h-12 bg-xforge-teal/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Star className="h-5 w-5 text-xforge-teal" />
+                      </div>
+                      <p className="text-white font-medium mb-1">Write Reviews</p>
+                      <p className="text-xforge-gray text-sm">50 Points Each</p>
+                    </div>
+                    <div className="bg-xforge-dark/60 backdrop-blur-sm p-5 rounded-xl text-center border border-xforge-teal/10 hover:border-xforge-teal/30 transition-all duration-300 transform hover:-translate-y-1 card-3d">
+                      <div className="w-12 h-12 bg-xforge-teal/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Clock className="h-5 w-5 text-xforge-teal" />
+                      </div>
+                      <p className="text-white font-medium mb-1">Daily Login</p>
+                      <p className="text-xforge-gray text-sm">5 Points/Day</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center justify-center mt-3 text-xforge-gray">
-                  <Sparkles className="h-4 w-4 text-xforge-teal mr-2" />
-                  <span>Silver Member</span>
-                </div>
+                
+                {/* Animated Background Elements */}
+                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-xforge-teal/30 to-transparent rounded-full blur-2xl"></div>
+                <div className="absolute bottom-0 left-10 w-20 h-20 bg-gradient-to-br from-[#8B5CF6]/30 to-transparent rounded-full blur-xl"></div>
               </div>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            <div className="bg-xforge-dark/50 p-4 rounded-xl text-center border border-xforge-teal/10 hover:border-xforge-teal/30 transition-colors">
-              <div className="w-10 h-10 bg-xforge-teal/10 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Tag className="h-5 w-5 text-xforge-teal" />
-              </div>
-              <p className="text-white font-medium">Shop Products</p>
-              <p className="text-xforge-gray text-sm">1 Point per $1</p>
-            </div>
-            <div className="bg-xforge-dark/50 p-4 rounded-xl text-center border border-xforge-teal/10 hover:border-xforge-teal/30 transition-colors">
-              <div className="w-10 h-10 bg-xforge-teal/10 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Gift className="h-5 w-5 text-xforge-teal" />
-              </div>
-              <p className="text-white font-medium">Use Promo Codes</p>
-              <p className="text-xforge-gray text-sm">25-100 Points</p>
-            </div>
-            <div className="bg-xforge-dark/50 p-4 rounded-xl text-center border border-xforge-teal/10 hover:border-xforge-teal/30 transition-colors">
-              <div className="w-10 h-10 bg-xforge-teal/10 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Star className="h-5 w-5 text-xforge-teal" />
-              </div>
-              <p className="text-white font-medium">Write Reviews</p>
-              <p className="text-xforge-gray text-sm">50 Points Each</p>
-            </div>
-            <div className="bg-xforge-dark/50 p-4 rounded-xl text-center border border-xforge-teal/10 hover:border-xforge-teal/30 transition-colors">
-              <div className="w-10 h-10 bg-xforge-teal/10 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Clock className="h-5 w-5 text-xforge-teal" />
-              </div>
-              <p className="text-white font-medium">Daily Login</p>
-              <p className="text-xforge-gray text-sm">5 Points/Day</p>
             </div>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto mb-16">
+        {/* Games Section */}
+        <div className="container mx-auto px-4 py-16">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center p-3 bg-xforge-teal bg-opacity-20 rounded-full mb-4">
-              <Dices className="h-6 w-6 text-xforge-teal" />
+            <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-[#8B5CF6]/30 to-[#F97316]/30 rounded-full mb-4 backdrop-blur-md">
+              <Gamepad className="h-6 w-6 text-white" />
             </div>
             <h2 className="text-3xl font-bold text-white mb-4">
-              Casino <span className="text-xforge-teal">Games</span>
+              Rewards <span className="text-gradient-teal">Arcade</span>
             </h2>
             <p className="text-xforge-gray max-w-2xl mx-auto">
-              Test your luck with our casino games and win exciting rewards!
-              Play daily for more chances to win points and prizes.
+              Test your luck and skill with our collection of games. Win points and exclusive rewards daily!
             </p>
           </div>
-          
-          <div className="flex justify-center mb-8">
-            <div className="inline-flex bg-xforge-darkgray rounded-full p-1">
+
+          {/* Game Selection Tabs */}
+          <div className="flex justify-center mb-12 overflow-x-auto py-2">
+            <div className="inline-flex bg-xforge-darkgray/60 backdrop-blur-md rounded-full p-1.5 border border-white/5">
               <button
-                className={`px-5 py-2.5 rounded-full transition-all duration-300 ${
+                className={`px-6 py-3 rounded-full transition-all duration-300 ${
                   activeGameTab === 'wheel' 
-                    ? 'bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark font-bold' 
+                    ? 'bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark font-bold' 
                     : 'text-xforge-gray hover:text-white'
                 }`}
                 onClick={() => setActiveGameTab('wheel')}
@@ -227,226 +278,357 @@ const Rewards: React.FC = () => {
                 Prize Wheel
               </button>
               <button
-                className={`px-5 py-2.5 rounded-full transition-all duration-300 ${
+                className={`px-6 py-3 rounded-full transition-all duration-300 ${
                   activeGameTab === 'slots' 
-                    ? 'bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark font-bold' 
+                    ? 'bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark font-bold' 
                     : 'text-xforge-gray hover:text-white'
                 }`}
                 onClick={() => setActiveGameTab('slots')}
               >
                 Slot Machine
               </button>
+              <button
+                className={`px-6 py-3 rounded-full transition-all duration-300 ${
+                  activeGameTab === 'memory' 
+                    ? 'bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark font-bold' 
+                    : 'text-xforge-gray hover:text-white'
+                }`}
+                onClick={() => setActiveGameTab('memory')}
+              >
+                Memory Game
+              </button>
+              <button
+                className={`px-6 py-3 rounded-full transition-all duration-300 ${
+                  activeGameTab === 'quiz' 
+                    ? 'bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark font-bold' 
+                    : 'text-xforge-gray hover:text-white'
+                }`}
+                onClick={() => setActiveGameTab('quiz')}
+              >
+                XForge Quiz
+              </button>
+              <button
+                className={`px-6 py-3 rounded-full transition-all duration-300 ${
+                  activeGameTab === 'daily' 
+                    ? 'bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark font-bold' 
+                    : 'text-xforge-gray hover:text-white'
+                }`}
+                onClick={() => setActiveGameTab('daily')}
+              >
+                Daily Challenge
+              </button>
             </div>
           </div>
           
-          <div className="relative">
-            <div className={`transition-opacity duration-300 ${activeGameTab === 'wheel' ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}>
-              <SpinWheel />
+          {/* Game Display Area */}
+          <div className="relative min-h-[400px] bg-gradient-to-br from-xforge-dark/80 to-[#131e27] rounded-3xl p-8 border border-white/5 backdrop-blur-sm">
+            <div className="absolute inset-0 overflow-hidden rounded-3xl">
+              <div className="absolute -top-16 -right-16 w-64 h-64 bg-xforge-teal/10 rounded-full blur-3xl"></div>
+              <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-[#8B5CF6]/10 rounded-full blur-3xl"></div>
             </div>
-            <div className={`transition-opacity duration-300 ${activeGameTab === 'slots' ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}>
-              <SlotMachine />
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-10 max-w-4xl mx-auto">
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <button 
-              className={`px-5 py-2.5 rounded-full transition-all duration-300 ${
-                expandedCategory === 'all' 
-                  ? 'bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark font-bold' 
-                  : 'bg-xforge-darkgray text-xforge-gray hover:text-white'
-              }`}
-              onClick={() => setExpandedCategory('all')}
-            >
-              All Rewards
-            </button>
-            {rewardCategories.map(category => (
-              <button 
-                key={category.id}
-                className={`px-5 py-2.5 rounded-full transition-all duration-300 ${
-                  expandedCategory === category.id 
-                    ? 'bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark font-bold' 
-                    : 'bg-xforge-darkgray text-xforge-gray hover:text-white'
-                }`}
-                onClick={() => setExpandedCategory(category.id)}
-              >
-                {category.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="max-w-4xl mx-auto mb-16">
-          {expandedCategory === 'all' ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {allRewards.map(reward => (
-                <div 
-                  key={reward.id} 
-                  className="group bg-gradient-to-br from-xforge-darkgray to-xforge-dark rounded-xl overflow-hidden shadow-xl hover:shadow-xforge-teal/20 transition-all duration-300 hover:translate-y-[-5px] border border-xforge-teal/10 hover:border-xforge-teal/30"
-                >
-                  <div className="relative">
-                    <img 
-                      src={reward.image}
-                      alt={reward.name}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {reward.popular && (
-                      <div className="absolute top-3 left-3 bg-xforge-teal text-xforge-dark text-xs font-bold px-3 py-1 rounded-full flex items-center">
-                        <Sparkles className="h-3 w-3 mr-1" /> Popular
-                      </div>
-                    )}
+            
+            <div className="relative z-10">
+              {/* Prize Wheel Game */}
+              <div className={`transition-all duration-500 ${activeGameTab === 'wheel' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 absolute pointer-events-none'}`}>
+                <SpinWheel />
+              </div>
+              
+              {/* Slot Machine Game */}
+              <div className={`transition-all duration-500 ${activeGameTab === 'slots' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 absolute pointer-events-none'}`}>
+                <SlotMachine />
+              </div>
+              
+              {/* Memory Game (Coming Soon) */}
+              <div className={`transition-all duration-500 h-full ${activeGameTab === 'memory' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 absolute pointer-events-none'}`}>
+                <div className="flex flex-col items-center justify-center h-full py-16">
+                  <div className="bg-xforge-teal/20 p-6 rounded-full mb-6">
+                    <Target className="h-16 w-16 text-xforge-teal" />
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-white font-bold text-xl mb-3 group-hover:text-xforge-teal transition-colors">{reward.name}</h3>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center">
-                        <Gift className="h-4 w-4 text-xforge-teal mr-2" />
-                        <span className="text-xforge-teal font-bold">{reward.pointsCost} Points</span>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Memory Match Challenge</h3>
+                  <p className="text-xforge-gray text-center max-w-md mb-8">
+                    Test your memory skills by matching XForge product pairs. The faster you match, the more points you earn!
+                  </p>
+                  <button 
+                    onClick={playMemoryGame}
+                    className="px-8 py-4 bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark font-bold rounded-full hover:shadow-lg hover:shadow-xforge-teal/20 transition-all duration-300"
+                  >
+                    Coming Soon
+                  </button>
+                </div>
+              </div>
+              
+              {/* XForge Quiz (Coming Soon) */}
+              <div className={`transition-all duration-500 h-full ${activeGameTab === 'quiz' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 absolute pointer-events-none'}`}>
+                <div className="flex flex-col items-center justify-center h-full py-16">
+                  <div className="bg-[#8B5CF6]/20 p-6 rounded-full mb-6">
+                    <Zap className="h-16 w-16 text-[#8B5CF6]" />
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">XForge Knowledge Quiz</h3>
+                  <p className="text-xforge-gray text-center max-w-md mb-8">
+                    Test your knowledge about XForge products and earn points for correct answers. New questions every week!
+                  </p>
+                  <button 
+                    onClick={playQuizGame}
+                    className="px-8 py-4 bg-gradient-to-r from-[#8B5CF6] to-[#A78BFA] text-white font-bold rounded-full hover:shadow-lg hover:shadow-[#8B5CF6]/20 transition-all duration-300"
+                  >
+                    Coming Soon
+                  </button>
+                </div>
+              </div>
+              
+              {/* Daily Challenge (Coming Soon) */}
+              <div className={`transition-all duration-500 h-full ${activeGameTab === 'daily' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 absolute pointer-events-none'}`}>
+                <div className="flex flex-col items-center justify-center h-full py-16">
+                  <div className="bg-[#F97316]/20 p-6 rounded-full mb-6">
+                    <Crown className="h-16 w-16 text-[#F97316]" />
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Daily Challenge</h3>
+                  <p className="text-xforge-gray text-center max-w-md mb-8">
+                    Complete a new challenge every day to earn bonus points. Chain consecutive days for multipliers!
+                  </p>
+                  <button 
+                    onClick={playDailyChallenge}
+                    className="px-8 py-4 bg-gradient-to-r from-[#F97316] to-[#FB923C] text-white font-bold rounded-full hover:shadow-lg hover:shadow-[#F97316]/20 transition-all duration-300"
+                  >
+                    Coming Soon
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Rewards Catalog Section */}
+        <div className="container mx-auto px-4 py-16">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center p-3 bg-xforge-teal/20 rounded-full mb-4 backdrop-blur-md">
+              <Gift className="h-6 w-6 text-xforge-teal" />
+            </div>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Rewards <span className="text-gradient-teal">Catalog</span>
+            </h2>
+            <p className="text-xforge-gray max-w-2xl mx-auto">
+              Redeem your hard-earned points for exclusive products, discounts, and special perks.
+            </p>
+          </div>
+          
+          {/* Category Navigation */}
+          <div className="mb-10">
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <button 
+                className={`px-5 py-2.5 rounded-full transition-all duration-300 ${
+                  expandedCategory === 'all' 
+                    ? 'bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark font-bold' 
+                    : 'bg-xforge-darkgray/60 backdrop-blur-sm text-xforge-gray hover:text-white border border-white/5'
+                }`}
+                onClick={() => setExpandedCategory('all')}
+              >
+                All Rewards
+              </button>
+              {rewardCategories.map(category => (
+                <button 
+                  key={category.id}
+                  className={`px-5 py-2.5 rounded-full transition-all duration-300 ${
+                    expandedCategory === category.id 
+                      ? 'bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark font-bold' 
+                      : 'bg-xforge-darkgray/60 backdrop-blur-sm text-xforge-gray hover:text-white border border-white/5'
+                  }`}
+                  onClick={() => setExpandedCategory(category.id)}
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Rewards Grid */}
+          <div className="max-w-7xl mx-auto">
+            {expandedCategory === 'all' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {allRewards.map(reward => (
+                  <div 
+                    key={reward.id} 
+                    className="group perspective-1000"
+                  >
+                    <div className="bg-gradient-to-br from-xforge-dark/90 to-[#141b22] rounded-xl overflow-hidden shadow-xl border border-white/5 transition-all duration-500 hover:shadow-xforge-teal/20 transform hover:scale-[1.02] card-3d">
+                      <div className="relative">
+                        <img 
+                          src={reward.image}
+                          alt={reward.name}
+                          className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-xforge-dark to-transparent opacity-60"></div>
+                        {reward.popular && (
+                          <div className="absolute top-3 left-3 bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark text-xs font-bold px-3 py-1.5 rounded-full flex items-center z-10">
+                            <Sparkles className="h-3 w-3 mr-1" /> Popular
+                          </div>
+                        )}
                       </div>
-                      {currentPoints >= reward.pointsCost && (
-                        <span className="bg-green-800 bg-opacity-30 text-green-400 text-xs px-2 py-1 rounded-full flex items-center">
-                          <Check className="h-3 w-3 mr-1" /> Available
-                        </span>
+                      <div className="p-6 border-t border-white/5">
+                        <h3 className="text-white font-bold text-xl mb-3 group-hover:text-xforge-teal transition-colors">{reward.name}</h3>
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center bg-xforge-teal/10 px-3 py-1.5 rounded-full">
+                            <Gift className="h-4 w-4 text-xforge-teal mr-2" />
+                            <span className="text-xforge-teal font-bold">{reward.pointsCost} Points</span>
+                          </div>
+                          {currentPoints >= reward.pointsCost && (
+                            <span className="bg-green-900/30 text-green-400 text-xs px-3 py-1.5 rounded-full flex items-center">
+                              <Check className="h-3 w-3 mr-1" /> Available
+                            </span>
+                          )}
+                        </div>
+                        <button 
+                          className={`w-full py-3.5 rounded-lg font-bold transition-all duration-300 ${
+                            currentPoints >= reward.pointsCost 
+                              ? 'bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark hover:shadow-lg hover:shadow-xforge-teal/20' 
+                              : 'bg-xforge-dark/80 text-xforge-gray cursor-not-allowed border border-xforge-gray/20'
+                          }`}
+                          onClick={() => handleRedeemReward(reward.name, reward.pointsCost)}
+                        >
+                          {currentPoints >= reward.pointsCost ? 'Redeem Reward' : `Need ${reward.pointsCost - currentPoints} more points`}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+                {rewardCategories
+                  .filter(category => category.id === expandedCategory)
+                  .map(category => (
+                    <div key={category.id}>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {category.rewards.map(reward => (
+                          <div 
+                            key={reward.id} 
+                            className="group perspective-1000"
+                          >
+                            <div className="bg-gradient-to-br from-xforge-dark/90 to-[#141b22] rounded-xl overflow-hidden shadow-xl border border-white/5 transition-all duration-500 hover:shadow-xforge-teal/20 transform hover:scale-[1.02] card-3d">
+                              <div className="relative">
+                                <img 
+                                  src={reward.image}
+                                  alt={reward.name}
+                                  className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-xforge-dark to-transparent opacity-60"></div>
+                                {reward.popular && (
+                                  <div className="absolute top-3 left-3 bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark text-xs font-bold px-3 py-1.5 rounded-full flex items-center z-10">
+                                    <Sparkles className="h-3 w-3 mr-1" /> Popular
+                                  </div>
+                                )}
+                              </div>
+                              <div className="p-6 border-t border-white/5">
+                                <h3 className="text-white font-bold text-xl mb-3 group-hover:text-xforge-teal transition-colors">{reward.name}</h3>
+                                <div className="flex items-center justify-between mb-4">
+                                  <div className="flex items-center bg-xforge-teal/10 px-3 py-1.5 rounded-full">
+                                    <Gift className="h-4 w-4 text-xforge-teal mr-2" />
+                                    <span className="text-xforge-teal font-bold">{reward.pointsCost} Points</span>
+                                  </div>
+                                  {currentPoints >= reward.pointsCost && (
+                                    <span className="bg-green-900/30 text-green-400 text-xs px-3 py-1.5 rounded-full flex items-center">
+                                      <Check className="h-3 w-3 mr-1" /> Available
+                                    </span>
+                                  )}
+                                </div>
+                                <button 
+                                  className={`w-full py-3.5 rounded-lg font-bold transition-all duration-300 ${
+                                    currentPoints >= reward.pointsCost 
+                                      ? 'bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark hover:shadow-lg hover:shadow-xforge-teal/20' 
+                                      : 'bg-xforge-dark/80 text-xforge-gray cursor-not-allowed border border-xforge-gray/20'
+                                  }`}
+                                  onClick={() => handleRedeemReward(reward.name, reward.pointsCost)}
+                                >
+                                  {currentPoints >= reward.pointsCost ? 'Redeem Reward' : `Need ${reward.pointsCost - currentPoints} more points`}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Rewards History Section */}
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
+              <span className="text-gradient-teal">Reward History</span>
+              <div className="h-px flex-grow bg-gradient-to-r from-xforge-teal/50 to-transparent"></div>
+            </h2>
+            
+            {rewardsHistory.length > 0 ? (
+              <div className="bg-gradient-to-br from-xforge-dark/80 to-[#141b22] rounded-xl overflow-hidden shadow-lg border border-white/5 backdrop-blur-sm">
+                <div className="p-6 border-b border-white/10">
+                  <h3 className="text-white font-semibold">Recently Redeemed Rewards</h3>
+                </div>
+                <div className="divide-y divide-white/5">
+                  {rewardsHistory.map(reward => (
+                    <div key={reward.id} className="p-6 hover:bg-white/5 transition-colors">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                          <h4 className="text-white font-medium">{reward.name}</h4>
+                          <div className="flex items-center text-xforge-gray text-sm mt-1">
+                            <Clock className="h-4 w-4 mr-1" />
+                            <span>{new Date(reward.date).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center bg-xforge-dark/60 px-4 py-2 rounded-lg border border-white/5">
+                          <Gift className="h-4 w-4 text-xforge-teal mr-2" />
+                          <span className="text-xforge-teal font-bold">{reward.pointsCost} Points</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gradient-to-br from-xforge-dark/80 to-[#141b22] rounded-xl p-8 text-center border border-white/5 backdrop-blur-sm">
+                <p className="text-xforge-gray">
+                  You haven't redeemed any rewards yet. Start using your points today!
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* FAQ Section */}
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
+              <span className="text-gradient-teal">Frequently Asked Questions</span>
+              <div className="h-px flex-grow bg-gradient-to-r from-xforge-teal/50 to-transparent"></div>
+            </h2>
+            
+            <div className="space-y-4">
+              {faqItems.map((faq) => (
+                <div key={faq.id} className="bg-gradient-to-br from-xforge-dark/80 to-[#141b22] rounded-xl overflow-hidden shadow-lg border border-white/5 backdrop-blur-sm">
+                  <button
+                    className="w-full p-6 flex items-center justify-between text-left transition-colors hover:bg-white/5"
+                    onClick={() => toggleFaq(faq.id)}
+                  >
+                    <span className="text-white font-bold">{faq.question}</span>
+                    <div className="w-8 h-8 rounded-full bg-xforge-teal/10 flex items-center justify-center flex-shrink-0">
+                      {expandedFaq === faq.id ? (
+                        <ChevronUp className="h-5 w-5 text-xforge-teal" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 text-xforge-teal" />
                       )}
                     </div>
-                    <button 
-                      className={`w-full py-3 rounded-lg font-bold transition-all duration-300 ${
-                        currentPoints >= reward.pointsCost 
-                          ? 'bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark hover:brightness-110' 
-                          : 'bg-xforge-dark text-xforge-gray cursor-not-allowed border border-xforge-gray/30'
-                      }`}
-                      onClick={() => handleRedeemReward(reward.name, reward.pointsCost)}
-                    >
-                      {currentPoints >= reward.pointsCost ? 'Redeem Reward' : `Need ${reward.pointsCost - currentPoints} more points`}
-                    </button>
-                  </div>
+                  </button>
+                  
+                  {expandedFaq === faq.id && (
+                    <div className="px-6 pb-6 animate-fade-in">
+                      <p className="text-xforge-gray">{faq.answer}</p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-          ) : (
-            <>
-              {rewardCategories
-                .filter(category => category.id === expandedCategory)
-                .map(category => (
-                  <div key={category.id}>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                      {category.rewards.map(reward => (
-                        <div 
-                          key={reward.id} 
-                          className="group bg-gradient-to-br from-xforge-darkgray to-xforge-dark rounded-xl overflow-hidden shadow-xl hover:shadow-xforge-teal/20 transition-all duration-300 hover:translate-y-[-5px] border border-xforge-teal/10 hover:border-xforge-teal/30"
-                        >
-                          <div className="relative">
-                            <img 
-                              src={reward.image}
-                              alt={reward.name}
-                              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
-                            {reward.popular && (
-                              <div className="absolute top-3 left-3 bg-xforge-teal text-xforge-dark text-xs font-bold px-3 py-1 rounded-full flex items-center">
-                                <Sparkles className="h-3 w-3 mr-1" /> Popular
-                              </div>
-                            )}
-                          </div>
-                          <div className="p-6">
-                            <h3 className="text-white font-bold text-xl mb-3 group-hover:text-xforge-teal transition-colors">{reward.name}</h3>
-                            <div className="flex items-center justify-between mb-4">
-                              <div className="flex items-center">
-                                <Gift className="h-4 w-4 text-xforge-teal mr-2" />
-                                <span className="text-xforge-teal font-bold">{reward.pointsCost} Points</span>
-                              </div>
-                              {currentPoints >= reward.pointsCost && (
-                                <span className="bg-green-800 bg-opacity-30 text-green-400 text-xs px-2 py-1 rounded-full flex items-center">
-                                  <Check className="h-3 w-3 mr-1" /> Available
-                                </span>
-                              )}
-                            </div>
-                            <button 
-                              className={`w-full py-3 rounded-lg font-bold transition-all duration-300 ${
-                                currentPoints >= reward.pointsCost 
-                                  ? 'bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark hover:brightness-110' 
-                                  : 'bg-xforge-dark text-xforge-gray cursor-not-allowed border border-xforge-gray/30'
-                              }`}
-                              onClick={() => handleRedeemReward(reward.name, reward.pointsCost)}
-                            >
-                              {currentPoints >= reward.pointsCost ? 'Redeem Reward' : `Need ${reward.pointsCost - currentPoints} more points`}
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-            </>
-          )}
-        </div>
-
-        <div className="max-w-4xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold text-white mb-8 inline-block border-b-2 border-xforge-teal pb-2">
-            Reward <span className="text-xforge-teal">History</span>
-          </h2>
-          
-          {rewardsHistory.length > 0 ? (
-            <div className="bg-gradient-to-br from-xforge-darkgray to-xforge-dark rounded-xl overflow-hidden shadow-lg border border-xforge-teal/10">
-              <div className="p-6 border-b border-xforge-lightgray">
-                <h3 className="text-white font-semibold">Recently Redeemed Rewards</h3>
-              </div>
-              <div className="divide-y divide-xforge-lightgray">
-                {rewardsHistory.map(reward => (
-                  <div key={reward.id} className="p-6 hover:bg-xforge-dark/50 transition-colors">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div>
-                        <h4 className="text-white font-medium">{reward.name}</h4>
-                        <div className="flex items-center text-xforge-gray text-sm mt-1">
-                          <Clock className="h-4 w-4 mr-1" />
-                          <span>{new Date(reward.date).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center bg-xforge-dark px-4 py-2 rounded-lg border border-xforge-lightgray">
-                        <Gift className="h-4 w-4 text-xforge-teal mr-2" />
-                        <span className="text-xforge-teal font-bold">{reward.pointsCost} Points</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="bg-xforge-darkgray rounded-xl p-8 text-center border border-xforge-teal/10">
-              <p className="text-xforge-gray">
-                You haven't redeemed any rewards yet. Start using your points today!
-              </p>
-            </div>
-          )}
-        </div>
-
-        <div className="max-w-3xl mx-auto mt-16">
-          <h2 className="text-3xl font-bold text-white mb-8 inline-block border-b-2 border-xforge-teal pb-2">
-            Frequently Asked <span className="text-xforge-teal">Questions</span>
-          </h2>
-          
-          <div className="space-y-4">
-            {faqItems.map((faq) => (
-              <div key={faq.id} className="bg-gradient-to-br from-xforge-darkgray to-xforge-dark rounded-xl overflow-hidden shadow-lg border border-xforge-teal/10">
-                <button
-                  className="w-full p-6 flex items-center justify-between text-left transition-colors hover:bg-xforge-dark/50"
-                  onClick={() => toggleFaq(faq.id)}
-                >
-                  <span className="text-white font-bold">{faq.question}</span>
-                  {expandedFaq === faq.id ? (
-                    <ChevronUp className="h-5 w-5 text-xforge-teal flex-shrink-0" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-xforge-teal flex-shrink-0" />
-                  )}
-                </button>
-                
-                {expandedFaq === faq.id && (
-                  <div className="px-6 pb-6 animate-fade-in">
-                    <p className="text-xforge-gray">{faq.answer}</p>
-                  </div>
-                )}
-              </div>
-            ))}
           </div>
         </div>
       </main>
