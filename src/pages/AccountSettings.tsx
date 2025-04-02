@@ -1,496 +1,622 @@
-
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState, useEffect } from "react";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { useNotifications } from "@/context/NotificationsContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { useToast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { IdCard, Mail, MailCheck, Check, Upload, ArrowRight, Shield } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { User, Lock, Bell, CreditCard, LogOut, Shield, Settings, HelpCircle, Smartphone, Mail, Eye, EyeOff } from "lucide-react";
 
-// Form schemas
-const personalInfoSchema = z.object({
-  firstName: z.string().min(2, "First name must be at least 2 characters"),
-  lastName: z.string().min(2, "Last name must be at least 2 characters"),
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  bio: z.string().optional(),
-});
+const AccountSettings: React.FC = () => {
+  const { addNotification } = useNotifications();
+  const [activeTab, setActiveTab] = useState("profile");
+  const [showPassword, setShowPassword] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-const emailVerificationSchema = z.object({
-  email: z.string().email("Please enter a valid email"),
-});
-
-const idVerificationSchema = z.object({
-  idType: z.enum(["passport", "driverLicense", "nationalId"], {
-    required_error: "Please select an ID type",
-  }),
-  idNumber: z.string().min(5, "ID number must be at least 5 characters"),
-  agreeToTerms: z.literal(true, {
-    errorMap: () => ({ message: "You must agree to the terms" }),
-  }),
-});
-
-const AccountSettings = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [emailVerified, setEmailVerified] = useState(false);
-  const [idVerified, setIdVerified] = useState(false);
-  const [emailVerificationSent, setEmailVerificationSent] = useState(false);
-  const [idPhotoUploaded, setIdPhotoUploaded] = useState(false);
-  const [idSubmitted, setIdSubmitted] = useState(false);
-  
-  // Profile form
-  const profileForm = useForm<z.infer<typeof personalInfoSchema>>({
-    resolver: zodResolver(personalInfoSchema),
-    defaultValues: {
-      firstName: "John",
-      lastName: "Doe",
-      username: "johndoe",
-      bio: "XForge enthusiast and gaming professional.",
-    },
+  // User profile state
+  const [profile, setProfile] = useState({
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    phone: "+1 (555) 123-4567",
+    address: "123 Main St, Anytown, USA",
+    bio: "Vaping enthusiast and XForge community member since 2022."
   });
 
-  // Email verification form
-  const emailForm = useForm<z.infer<typeof emailVerificationSchema>>({
-    resolver: zodResolver(emailVerificationSchema),
-    defaultValues: {
-      email: "john.doe@example.com",
-    },
+  // Notification settings state
+  const [notifications, setNotifications] = useState({
+    emailNotifications: true,
+    smsNotifications: false,
+    productUpdates: true,
+    securityAlerts: true,
+    promotions: false
   });
 
-  // ID verification form
-  const idForm = useForm<z.infer<typeof idVerificationSchema>>({
-    resolver: zodResolver(idVerificationSchema),
-    defaultValues: {
-      idType: "passport",
-      idNumber: "",
-      agreeToTerms: false,
-    },
+  // Security settings state
+  const [security, setSecurity] = useState({
+    twoFactorAuth: false,
+    rememberDevice: true,
+    passwordExpiry: "90days"
   });
 
-  const onProfileSubmit = (data: z.infer<typeof personalInfoSchema>) => {
-    toast({
-      title: "Profile updated",
-      description: "Your profile has been successfully updated.",
-    });
-    console.log("Profile data:", data);
-  };
+  // Payment methods state
+  const [paymentMethods, setPaymentMethods] = useState([
+    { id: 1, type: "visa", last4: "4242", expiry: "04/25", default: true },
+    { id: 2, type: "mastercard", last4: "5555", expiry: "08/24", default: false }
+  ]);
 
-  const onSendEmailVerification = (data: z.infer<typeof emailVerificationSchema>) => {
-    setEmailVerificationSent(true);
-    toast({
-      title: "Verification email sent",
-      description: `A verification link has been sent to ${data.email}`,
-    });
-    console.log("Email verification sent to:", data.email);
+  const handleProfileUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
     
-    // Simulate email verification after 3 seconds (for demo purposes)
+    // Simulate API call
     setTimeout(() => {
-      setEmailVerified(true);
-      toast({
-        title: "Email verified",
-        description: "Your email has been successfully verified.",
+      setLoading(false);
+      setFormSubmitted(true);
+      
+      addNotification({
+        title: "Profile Updated",
+        message: "Your profile information has been successfully updated.",
+        type: "success"
       });
-    }, 3000);
+      
+      setTimeout(() => setFormSubmitted(false), 3000);
+    }, 1500);
   };
 
-  const handleVerifyId = (data: z.infer<typeof idVerificationSchema>) => {
-    if (!idPhotoUploaded) {
-      toast({
-        title: "Upload required",
-        description: "Please upload a photo of your ID first",
-        variant: "destructive",
-      });
-      return;
-    }
+  const handleNotificationUpdate = () => {
+    setLoading(true);
     
-    setIdSubmitted(true);
-    toast({
-      title: "ID verification submitted",
-      description: "Your ID verification has been submitted and is pending review.",
-    });
-    console.log("ID verification data:", data);
-    
-    // Simulate ID verification after 5 seconds (for demo purposes)
+    // Simulate API call
     setTimeout(() => {
-      setIdVerified(true);
-      toast({
-        title: "ID verified",
-        description: "Your government ID has been successfully verified.",
+      setLoading(false);
+      
+      addNotification({
+        title: "Notification Preferences Updated",
+        message: "Your notification settings have been saved.",
+        type: "success"
       });
-    }, 5000);
+    }, 1000);
   };
 
-  const handleIdPhotoUpload = () => {
-    setIdPhotoUploaded(true);
-    toast({
-      title: "Photo uploaded",
-      description: "Your ID photo has been uploaded successfully.",
+  const handleSecurityUpdate = () => {
+    setLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false);
+      
+      addNotification({
+        title: "Security Settings Updated",
+        message: "Your security preferences have been updated successfully.",
+        type: "success"
+      });
+    }, 1000);
+  };
+
+  const handlePasswordChange = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false);
+      
+      addNotification({
+        title: "Password Changed",
+        message: "Your password has been updated successfully.",
+        type: "success"
+      });
+    }, 1500);
+  };
+
+  const handleSetDefaultPayment = (id: number) => {
+    setPaymentMethods(methods => 
+      methods.map(method => ({
+        ...method,
+        default: method.id === id
+      }))
+    );
+    
+    addNotification({
+      title: "Default Payment Updated",
+      message: "Your default payment method has been changed.",
+      type: "success"
+    });
+  };
+
+  const handleDeletePayment = (id: number) => {
+    setPaymentMethods(methods => methods.filter(method => method.id !== id));
+    
+    addNotification({
+      title: "Payment Method Removed",
+      message: "The payment method has been removed from your account.",
+      type: "success"
     });
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col bg-xforge-dark bg-[radial-gradient(circle_at_top_right,rgba(2,236,207,0.05),transparent_70%)]">
       <Header />
-      
-      <main className="container py-12 mx-auto">
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Account Settings</h1>
-            <p className="text-muted-foreground">Manage your account preferences and verification</p>
+      <main className="flex-grow container mx-auto px-4 pt-32 pb-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center p-2 bg-xforge-teal bg-opacity-20 rounded-full mb-4">
+              <Settings className="h-6 w-6 text-xforge-teal" />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-white to-xforge-teal bg-clip-text text-transparent">
+              Account Settings
+            </h1>
+            <p className="text-xforge-gray max-w-2xl mx-auto">
+              Manage your profile, security settings, and preferences to customize your XForge experience.
+            </p>
           </div>
-          
-          <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid grid-cols-3 md:w-[400px]">
-              <TabsTrigger value="profile">Profile</TabsTrigger>
-              <TabsTrigger value="verification">Verification</TabsTrigger>
-              <TabsTrigger value="security">Security</TabsTrigger>
-            </TabsList>
-            
-            {/* Profile Tab */}
-            <TabsContent value="profile" className="space-y-4 mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Personal Information</CardTitle>
-                  <CardDescription>Update your personal details</CardDescription>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+            {/* Sidebar */}
+            <div className="md:col-span-3">
+              <Card className="bg-gradient-to-b from-xforge-dark/90 to-xforge-dark border border-xforge-teal/10 shadow-lg sticky top-32">
+                <CardHeader className="pb-4">
+                  <div className="flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-xforge-teal/20 to-xforge-teal/10 flex items-center justify-center border border-xforge-teal/30 mb-4">
+                      <span className="text-2xl font-bold text-xforge-teal">JD</span>
+                    </div>
+                    <CardTitle className="text-white text-xl">John Doe</CardTitle>
+                    <CardDescription className="text-xforge-gray">Premium Member</CardDescription>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <Form {...profileForm}>
-                    <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField
-                          control={profileForm.control}
-                          name="firstName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>First Name</FormLabel>
-                              <FormControl>
-                                <Input {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={profileForm.control}
-                          name="lastName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Last Name</FormLabel>
-                              <FormControl>
-                                <Input {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      
-                      <FormField
-                        control={profileForm.control}
-                        name="username"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={profileForm.control}
-                        name="bio"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Bio</FormLabel>
-                            <FormControl>
-                              <Textarea
-                                placeholder="Tell us about yourself"
-                                className="resize-none"
-                                {...field}
+                <CardContent className="px-2">
+                  <div className="space-y-1">
+                    <Button 
+                      variant="ghost" 
+                      className={`w-full justify-start ${activeTab === "profile" ? "bg-xforge-teal/10 text-xforge-teal" : "text-xforge-gray hover:text-white"}`}
+                      onClick={() => setActiveTab("profile")}
+                    >
+                      <User className="mr-2 h-5 w-5" /> Profile
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      className={`w-full justify-start ${activeTab === "security" ? "bg-xforge-teal/10 text-xforge-teal" : "text-xforge-gray hover:text-white"}`}
+                      onClick={() => setActiveTab("security")}
+                    >
+                      <Shield className="mr-2 h-5 w-5" /> Security
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      className={`w-full justify-start ${activeTab === "notifications" ? "bg-xforge-teal/10 text-xforge-teal" : "text-xforge-gray hover:text-white"}`}
+                      onClick={() => setActiveTab("notifications")}
+                    >
+                      <Bell className="mr-2 h-5 w-5" /> Notifications
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      className={`w-full justify-start ${activeTab === "payment" ? "bg-xforge-teal/10 text-xforge-teal" : "text-xforge-gray hover:text-white"}`}
+                      onClick={() => setActiveTab("payment")}
+                    >
+                      <CreditCard className="mr-2 h-5 w-5" /> Payment Methods
+                    </Button>
+                  </div>
+                </CardContent>
+                <CardFooter className="border-t border-xforge-teal/10 mt-4 flex justify-center">
+                  <Button variant="ghost" className="text-red-400 hover:text-red-300 hover:bg-red-900/20">
+                    <LogOut className="mr-2 h-5 w-5" /> Sign Out
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+
+            {/* Main Content */}
+            <div className="md:col-span-9">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                {/* Profile Tab */}
+                <TabsContent value="profile" className="mt-0">
+                  <Card className="bg-gradient-to-b from-xforge-dark/90 to-xforge-dark border border-xforge-teal/10 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="text-white text-2xl flex items-center">
+                        <User className="mr-2 h-6 w-6 text-xforge-teal" /> Profile Information
+                      </CardTitle>
+                      <CardDescription>
+                        Update your personal information and public profile
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <form onSubmit={handleProfileUpdate}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <Label htmlFor="firstName" className="text-xforge-gray">First Name</Label>
+                            <Input 
+                              id="firstName" 
+                              value={profile.firstName}
+                              onChange={(e) => setProfile({...profile, firstName: e.target.value})}
+                              className="bg-xforge-dark/50 border-xforge-lightgray/30 focus:border-xforge-teal"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="lastName" className="text-xforge-gray">Last Name</Label>
+                            <Input 
+                              id="lastName" 
+                              value={profile.lastName}
+                              onChange={(e) => setProfile({...profile, lastName: e.target.value})}
+                              className="bg-xforge-dark/50 border-xforge-lightgray/30 focus:border-xforge-teal"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="email" className="text-xforge-gray">Email Address</Label>
+                            <Input 
+                              id="email" 
+                              type="email"
+                              value={profile.email}
+                              onChange={(e) => setProfile({...profile, email: e.target.value})}
+                              className="bg-xforge-dark/50 border-xforge-lightgray/30 focus:border-xforge-teal"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="phone" className="text-xforge-gray">Phone Number</Label>
+                            <Input 
+                              id="phone" 
+                              value={profile.phone}
+                              onChange={(e) => setProfile({...profile, phone: e.target.value})}
+                              className="bg-xforge-dark/50 border-xforge-lightgray/30 focus:border-xforge-teal"
+                            />
+                          </div>
+                          <div className="space-y-2 md:col-span-2">
+                            <Label htmlFor="address" className="text-xforge-gray">Address</Label>
+                            <Input 
+                              id="address" 
+                              value={profile.address}
+                              onChange={(e) => setProfile({...profile, address: e.target.value})}
+                              className="bg-xforge-dark/50 border-xforge-lightgray/30 focus:border-xforge-teal"
+                            />
+                          </div>
+                          <div className="space-y-2 md:col-span-2">
+                            <Label htmlFor="bio" className="text-xforge-gray">Bio</Label>
+                            <textarea 
+                              id="bio" 
+                              rows={4}
+                              value={profile.bio}
+                              onChange={(e) => setProfile({...profile, bio: e.target.value})}
+                              className="w-full p-2 rounded-md bg-xforge-dark/50 border border-xforge-lightgray/30 focus:border-xforge-teal outline-none text-white"
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-6 flex justify-end">
+                          <Button 
+                            type="submit" 
+                            disabled={loading}
+                            className="bg-gradient-to-r from-xforge-teal to-teal-400 text-xforge-dark hover:brightness-110"
+                          >
+                            {loading ? "Saving..." : formSubmitted ? "Saved!" : "Save Changes"}
+                          </Button>
+                        </div>
+                      </form>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Security Tab */}
+                <TabsContent value="security" className="mt-0 space-y-6">
+                  <Card className="bg-gradient-to-b from-xforge-dark/90 to-xforge-dark border border-xforge-teal/10 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="text-white text-2xl flex items-center">
+                        <Lock className="mr-2 h-6 w-6 text-xforge-teal" /> Password
+                      </CardTitle>
+                      <CardDescription>
+                        Change your password to keep your account secure
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <form onSubmit={handlePasswordChange}>
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="currentPassword" className="text-xforge-gray">Current Password</Label>
+                            <div className="relative">
+                              <Input 
+                                id="currentPassword" 
+                                type={showPassword ? "text" : "password"}
+                                placeholder="••••••••"
+                                className="bg-xforge-dark/50 border-xforge-lightgray/30 focus:border-xforge-teal pr-10"
                               />
-                            </FormControl>
-                            <FormDescription>
-                              Brief description for your profile.
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <Button type="submit">Save Changes</Button>
-                    </form>
-                  </Form>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            {/* Verification Tab */}
-            <TabsContent value="verification" className="space-y-4 mt-4">
-              {/* Email Verification */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Mail className="h-5 w-5" />
-                    Email Verification
-                    {emailVerified && (
-                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
-                        <Check className="w-3 h-3 mr-1" /> Verified
-                      </span>
-                    )}
-                  </CardTitle>
-                  <CardDescription>
-                    Verify your email address to secure your account
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Form {...emailForm}>
-                    <form onSubmit={emailForm.handleSubmit(onSendEmailVerification)} className="space-y-4">
-                      <FormField
-                        control={emailForm.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email Address</FormLabel>
-                            <FormControl>
-                              <div className="flex gap-2">
-                                <Input {...field} readOnly={emailVerified} />
-                                <Button 
-                                  type="submit" 
-                                  disabled={emailVerified || emailVerificationSent}
-                                  variant={emailVerified ? "outline" : "default"}
-                                >
-                                  {emailVerified ? (
-                                    <span className="flex items-center">
-                                      <MailCheck className="w-4 h-4 mr-2" />
-                                      Verified
-                                    </span>
-                                  ) : emailVerificationSent ? (
-                                    "Sent"
-                                  ) : (
-                                    "Verify"
-                                  )}
-                                </Button>
-                              </div>
-                            </FormControl>
-                            <FormDescription>
-                              {emailVerified 
-                                ? "Your email has been verified." 
-                                : emailVerificationSent 
-                                  ? "Check your inbox for the verification link." 
-                                  : "We'll send a verification link to this email."}
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </form>
-                  </Form>
-                </CardContent>
-              </Card>
-              
-              {/* ID Verification */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <IdCard className="h-5 w-5" />
-                    Government ID Verification
-                    {idVerified && (
-                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
-                        <Check className="w-3 h-3 mr-1" /> Verified
-                      </span>
-                    )}
-                  </CardTitle>
-                  <CardDescription>
-                    Verify your identity with a government-issued ID
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {idVerified ? (
-                    <div className="bg-muted p-4 rounded-md">
-                      <p className="flex items-center text-sm font-medium text-green-600 dark:text-green-400">
-                        <Shield className="w-4 h-4 mr-2" />
-                        Your identity has been verified. Thank you for completing the verification process.
-                      </p>
-                    </div>
-                  ) : idSubmitted ? (
-                    <div className="bg-muted p-4 rounded-md">
-                      <p className="text-sm">
-                        Your ID verification is being processed. This usually takes 1-3 business days.
-                      </p>
-                    </div>
-                  ) : (
-                    <Form {...idForm}>
-                      <form onSubmit={idForm.handleSubmit(handleVerifyId)} className="space-y-4">
-                        <FormField
-                          control={idForm.control}
-                          name="idType"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>ID Type</FormLabel>
-                              <FormControl>
-                                <select
-                                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                                  {...field}
-                                >
-                                  <option value="passport">Passport</option>
-                                  <option value="driverLicense">Driver's License</option>
-                                  <option value="nationalId">National ID</option>
-                                </select>
-                              </FormControl>
-                              <FormDescription>
-                                Select the type of government ID you will provide
-                              </FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                              <button 
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xforge-gray hover:text-xforge-teal"
+                              >
+                                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                              </button>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="newPassword" className="text-xforge-gray">New Password</Label>
+                            <Input 
+                              id="newPassword" 
+                              type={showPassword ? "text" : "password"}
+                              placeholder="••••••••"
+                              className="bg-xforge-dark/50 border-xforge-lightgray/30 focus:border-xforge-teal"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="confirmPassword" className="text-xforge-gray">Confirm New Password</Label>
+                            <Input 
+                              id="confirmPassword" 
+                              type={showPassword ? "text" : "password"}
+                              placeholder="••••••••"
+                              className="bg-xforge-dark/50 border-xforge-lightgray/30 focus:border-xforge-teal"
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-6 flex justify-end">
+                          <Button 
+                            type="submit" 
+                            disabled={loading}
+                            className="bg-gradient-to-r from-xforge-teal to-teal-400 text-xforge-dark hover:brightness-110"
+                          >
+                            {loading ? "Updating..." : "Update Password"}
+                          </Button>
+                        </div>
+                      </form>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gradient-to-b from-xforge-dark/90 to-xforge-dark border border-xforge-teal/10 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="text-white text-2xl flex items-center">
+                        <Shield className="mr-2 h-6 w-6 text-xforge-teal" /> Security Settings
+                      </CardTitle>
+                      <CardDescription>
+                        Manage your account security preferences
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-0.5">
+                            <Label className="text-white">Two-Factor Authentication</Label>
+                            <p className="text-sm text-xforge-gray">Add an extra layer of security to your account</p>
+                          </div>
+                          <Switch 
+                            checked={security.twoFactorAuth}
+                            onCheckedChange={(checked) => setSecurity({...security, twoFactorAuth: checked})}
+                            className="data-[state=checked]:bg-xforge-teal"
+                          />
+                        </div>
                         
-                        <FormField
-                          control={idForm.control}
-                          name="idNumber"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>ID Number</FormLabel>
-                              <FormControl>
-                                <Input {...field} />
-                              </FormControl>
-                              <FormDescription>
-                                Enter the number shown on your ID
-                              </FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-0.5">
+                            <Label className="text-white">Remember This Device</Label>
+                            <p className="text-sm text-xforge-gray">Stay logged in on this device</p>
+                          </div>
+                          <Switch 
+                            checked={security.rememberDevice}
+                            onCheckedChange={(checked) => setSecurity({...security, rememberDevice: checked})}
+                            className="data-[state=checked]:bg-xforge-teal"
+                          />
+                        </div>
                         
                         <div className="space-y-2">
-                          <FormLabel>ID Photo</FormLabel>
-                          <div className="border-2 border-dashed border-input rounded-md p-6 flex flex-col items-center justify-center">
-                            <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                            <p className="text-sm text-muted-foreground mb-1">
-                              Drag and drop your ID image, or click to browse
-                            </p>
+                          <Label className="text-white">Password Expiry</Label>
+                          <p className="text-sm text-xforge-gray mb-2">Choose how often you want to reset your password</p>
+                          <div className="flex flex-wrap gap-3">
                             <Button 
                               type="button" 
-                              variant="outline" 
-                              onClick={handleIdPhotoUpload}
-                              className="mt-2"
-                              disabled={idPhotoUploaded}
+                              variant="outline"
+                              className={`border-xforge-teal ${security.passwordExpiry === "30days" ? "bg-xforge-teal text-xforge-dark" : "bg-transparent text-xforge-teal"}`}
+                              onClick={() => setSecurity({...security, passwordExpiry: "30days"})}
                             >
-                              {idPhotoUploaded ? "Uploaded" : "Upload ID"}
+                              30 Days
+                            </Button>
+                            <Button 
+                              type="button" 
+                              variant="outline"
+                              className={`border-xforge-teal ${security.passwordExpiry === "60days" ? "bg-xforge-teal text-xforge-dark" : "bg-transparent text-xforge-teal"}`}
+                              onClick={() => setSecurity({...security, passwordExpiry: "60days"})}
+                            >
+                              60 Days
+                            </Button>
+                            <Button 
+                              type="button" 
+                              variant="outline"
+                              className={`border-xforge-teal ${security.passwordExpiry === "90days" ? "bg-xforge-teal text-xforge-dark" : "bg-transparent text-xforge-teal"}`}
+                              onClick={() => setSecurity({...security, passwordExpiry: "90days"})}
+                            >
+                              90 Days
+                            </Button>
+                            <Button 
+                              type="button" 
+                              variant="outline"
+                              className={`border-xforge-teal ${security.passwordExpiry === "never" ? "bg-xforge-teal text-xforge-dark" : "bg-transparent text-xforge-teal"}`}
+                              onClick={() => setSecurity({...security, passwordExpiry: "never"})}
+                            >
+                              Never
                             </Button>
                           </div>
                         </div>
                         
-                        <FormField
-                          control={idForm.control}
-                          name="agreeToTerms"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                              <div className="space-y-1 leading-none">
-                                <FormLabel>
-                                  I confirm that the information provided is accurate and belongs to me
-                                </FormLabel>
-                                <FormMessage />
-                              </div>
-                            </FormItem>
-                          )}
-                        />
+                        <div className="pt-4 border-t border-xforge-teal/10">
+                          <Button 
+                            onClick={handleSecurityUpdate}
+                            disabled={loading}
+                            className="bg-gradient-to-r from-xforge-teal to-teal-400 text-xforge-dark hover:brightness-110"
+                          >
+                            {loading ? "Saving..." : "Save Security Settings"}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Notifications Tab */}
+                <TabsContent value="notifications" className="mt-0">
+                  <Card className="bg-gradient-to-b from-xforge-dark/90 to-xforge-dark border border-xforge-teal/10 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="text-white text-2xl flex items-center">
+                        <Bell className="mr-2 h-6 w-6 text-xforge-teal" /> Notification Preferences
+                      </CardTitle>
+                      <CardDescription>
+                        Manage how and when you receive notifications from XForge
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-6">
+                        <div className="space-y-4">
+                          <h3 className="text-lg font-medium text-white">Notification Channels</h3>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <Mail className="h-5 w-5 text-xforge-teal" />
+                              <Label className="text-xforge-gray">Email Notifications</Label>
+                            </div>
+                            <Switch 
+                              checked={notifications.emailNotifications}
+                              onCheckedChange={(checked) => setNotifications({...notifications, emailNotifications: checked})}
+                              className="data-[state=checked]:bg-xforge-teal"
+                            />
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <Smartphone className="h-5 w-5 text-xforge-teal" />
+                              <Label className="text-xforge-gray">SMS Notifications</Label>
+                            </div>
+                            <Switch 
+                              checked={notifications.smsNotifications}
+                              onCheckedChange={(checked) => setNotifications({...notifications, smsNotifications: checked})}
+                              className="data-[state=checked]:bg-xforge-teal"
+                            />
+                          </div>
+                        </div>
                         
-                        <Button type="submit">Submit for Verification</Button>
-                      </form>
-                    </Form>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            {/* Security Tab */}
-            <TabsContent value="security" className="space-y-4 mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Security Settings</CardTitle>
-                  <CardDescription>Manage your account security</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium">Two-Factor Authentication</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Add an extra layer of security to your account
-                      </p>
-                    </div>
-                    <Switch />
-                  </div>
-                  
-                  <Collapsible className="w-full">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium">Change Password</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Update your password regularly for better security
-                        </p>
+                        <div className="space-y-4 pt-6 border-t border-xforge-teal/10">
+                          <h3 className="text-lg font-medium text-white">Notification Types</h3>
+                          <div className="space-y-3">
+                            <div className="flex items-start space-x-2">
+                              <Checkbox 
+                                id="productUpdates" 
+                                checked={notifications.productUpdates}
+                                onCheckedChange={(checked) => setNotifications({...notifications, productUpdates: checked as boolean})}
+                                className="data-[state=checked]:bg-xforge-teal data-[state=checked]:border-xforge-teal mt-1"
+                              />
+                              <div className="space-y-1">
+                                <Label htmlFor="productUpdates" className="text-white">Product Updates</Label>
+                                <p className="text-sm text-xforge-gray">Receive notifications about new products and features</p>
+                              </div>
+                            </div>
+                            <div className="flex items-start space-x-2">
+                              <Checkbox 
+                                id="securityAlerts" 
+                                checked={notifications.securityAlerts}
+                                onCheckedChange={(checked) => setNotifications({...notifications, securityAlerts: checked as boolean})}
+                                className="data-[state=checked]:bg-xforge-teal data-[state=checked]:border-xforge-teal mt-1"
+                              />
+                              <div className="space-y-1">
+                                <Label htmlFor="securityAlerts" className="text-white">Security Alerts</Label>
+                                <p className="text-sm text-xforge-gray">Get notified about important security updates and account activity</p>
+                              </div>
+                            </div>
+                            <div className="flex items-start space-x-2">
+                              <Checkbox 
+                                id="promotions" 
+                                checked={notifications.promotions}
+                                onCheckedChange={(checked) => setNotifications({...notifications, promotions: checked as boolean})}
+                                className="data-[state=checked]:bg-xforge-teal data-[state=checked]:border-xforge-teal mt-1"
+                              />
+                              <div className="space-y-1">
+                                <Label htmlFor="promotions" className="text-white">Promotions & Offers</Label>
+                                <p className="text-sm text-xforge-gray">Receive special offers, discounts, and promotional content</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="pt-4 flex justify-end">
+                          <Button 
+                            onClick={handleNotificationUpdate}
+                            disabled={loading}
+                            className="bg-gradient-to-r from-xforge-teal to-teal-400 text-xforge-dark hover:brightness-110"
+                          >
+                            {loading ? "Saving..." : "Save Preferences"}
+                          </Button>
+                        </div>
                       </div>
-                      <CollapsibleTrigger asChild>
-                        <Button variant="ghost" size="sm">
-                          <ArrowRight className="h-4 w-4" />
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Payment Methods Tab */}
+                <TabsContent value="payment" className="mt-0">
+                  <Card className="bg-gradient-to-b from-xforge-dark/90 to-xforge-dark border border-xforge-teal/10 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="text-white text-2xl flex items-center">
+                        <CreditCard className="mr-2 h-6 w-6 text-xforge-teal" /> Payment Methods
+                      </CardTitle>
+                      <CardDescription>
+                        Manage your payment methods and billing preferences
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-6">
+                        <div className="space-y-4">
+                          {paymentMethods.map((method) => (
+                            <div 
+                              key={method.id} 
+                              className={`p-4 rounded-lg border ${method.default ? 'border-xforge-teal bg-xforge-teal/5' : 'border-xforge-lightgray/20'} flex flex-col sm:flex-row sm:items-center justify-between gap-4`}
+                            >
+                              <div className="flex items-center space-x-4">
+                                <div className="w-12 h-8 bg-gradient-to-br from-xforge-dark to-xforge-darkgray rounded border border-xforge-lightgray/30 flex items-center justify-center">
+                                  {method.type === "visa" && <span className="text-blue-400 font-bold text-sm">VISA</span>}
+                                  {method.type === "mastercard" && <span className="text-red-400 font-bold text-sm">MC</span>}
+                                </div>
+                                <div>
+                                  <p className="text-white font-medium">
+                                    {method.type === "visa" ? "Visa" : "Mastercard"} ending in {method.last4}
+                                  </p>
+                                  <p className="text-sm text-xforge-gray">Expires {method.expiry}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2 sm:space-x-4">
+                                {method.default ? (
+                                  <span className="text-sm text-xforge-teal bg-xforge-teal/10 px-3 py-1 rounded-full">Default</span>
+                                ) : (
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => handleSetDefaultPayment(method.id)}
+                                    className="text-xforge-teal border-xforge-teal hover:bg-xforge-teal hover:text-xforge-dark"
+                                  >
+                                    Set as Default
+                                  </Button>
+                                )}
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => handleDeletePayment(method.id)}
+                                  className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                                  disabled={method.default}
+                                >
+                                  Remove
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <Button 
+                          className="w-full bg-xforge-dark border border-xforge-teal text-xforge-teal hover:bg-xforge-teal hover:text-xforge-dark"
+                        >
+                          <CreditCard className="mr-2 h-5 w-5" /> Add New Payment Method
                         </Button>
-                      </CollapsibleTrigger>
-                    </div>
-                    
-                    <CollapsibleContent className="mt-4 space-y-4">
-                      <div className="space-y-2">
-                        <FormLabel>Current Password</FormLabel>
-                        <Input type="password" />
                       </div>
-                      <div className="space-y-2">
-                        <FormLabel>New Password</FormLabel>
-                        <Input type="password" />
-                      </div>
-                      <div className="space-y-2">
-                        <FormLabel>Confirm New Password</FormLabel>
-                        <Input type="password" />
-                      </div>
-                      <Button>Update Password</Button>
-                    </CollapsibleContent>
-                  </Collapsible>
-                  
-                  <div className="flex items-center justify-between pt-4">
-                    <div>
-                      <h4 className="font-medium text-destructive">Danger Zone</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Permanently delete your account and all data
-                      </p>
-                    </div>
-                    <Button variant="destructive">Delete Account</Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </div>
+          </div>
         </div>
       </main>
-      
       <Footer />
     </div>
   );
