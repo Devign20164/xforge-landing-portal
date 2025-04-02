@@ -1,8 +1,7 @@
-
 import React, { useRef, useEffect } from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDistanceToNow } from 'date-fns';
-import { Bell, X, CheckCheck, Info, Gift, Tag } from 'lucide-react';
+import { Bell, X, CheckCheck, Info, Gift, Tag, CheckCircle } from 'lucide-react';
 import { useNotifications } from '@/context/NotificationsContext';
 
 interface NotificationsDropdownProps {
@@ -38,6 +37,7 @@ const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ isOpen, o
       case 'promotion': return <Tag className="h-5 w-5 text-pink-400" />;
       case 'points': return <Gift className="h-5 w-5 text-green-400" />;
       case 'system': return <Info className="h-5 w-5 text-xforge-teal" />;
+      case 'success': return <CheckCircle className="h-5 w-5 text-green-500" />;
       default: return <Bell className="h-5 w-5 text-xforge-gray" />;
     }
   };
