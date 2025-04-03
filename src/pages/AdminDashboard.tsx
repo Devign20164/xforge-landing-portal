@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -16,7 +15,8 @@ import {
   ChevronDown,
   Search,
   RefreshCw,
-  Clock
+  Clock,
+  Trophy
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -44,7 +44,6 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-// Mock data for the dashboard
 const mockRetailers = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
   name: `Retailer ${i + 1}`,
@@ -77,7 +76,6 @@ const mockRewards = [
   { id: 4, name: "Free Month Subscription", points: 750, stock: 100 },
 ];
 
-// Dashboard stats
 const dashboardStats = [
   { label: "Total Users", value: "2,845", icon: <Users className="text-purple-500" /> },
   { label: "Active Games", value: "5", icon: <Gamepad className="text-blue-500" /> },
@@ -93,6 +91,12 @@ const AdminDashboard: React.FC = () => {
   const [rewards, setRewards] = useState(mockRewards);
   const [searchQuery, setSearchQuery] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [prizes, setPrizes] = useState([
+    { id: 1, name: "iPhone 16", description: "Latest Apple smartphone", quantity: 1 },
+    { id: 2, name: "Gaming Console", description: "Next-gen gaming system", quantity: 3 },
+    { id: 3, name: "Smart Watch", description: "Fitness and health tracker", quantity: 5 }
+  ]);
+  const [newPrize, setNewPrize] = useState({ name: "", description: "", quantity: 1 });
 
   const handleLogout = () => {
     localStorage.removeItem("isAdmin");
@@ -154,6 +158,38 @@ const AdminDashboard: React.FC = () => {
     }, 1000);
   };
 
+  const addPrize = () => {
+    if (!newPrize.name) {
+      toast({
+        title: "Invalid Prize",
+        description: "Please enter a prize name",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const prize = {
+      id: prizes.length + 1,
+      ...newPrize
+    };
+    
+    setPrizes([...prizes, prize]);
+    setNewPrize({ name: "", description: "", quantity: 1 });
+    
+    toast({
+      title: "Prize Added",
+      description: `${prize.name} has been added to the prize pool`,
+    });
+  };
+
+  const deletePrize = (id: number) => {
+    setPrizes(prizes.filter(p => p.id !== id));
+    toast({
+      title: "Prize Deleted",
+      description: "The prize has been removed from the pool",
+    });
+  };
+
   const filteredRetailers = searchQuery 
     ? mockRetailers.filter(retailer => 
         retailer.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -162,7 +198,6 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-xforge-darkgray to-xforge-dark">
-      {/* Navbar */}
       <div className="fixed top-0 left-0 right-0 z-50 glass-dark backdrop-blur-md border-b border-xforge-teal/20 shadow-lg">
         <div className="container mx-auto flex justify-between items-center py-3 px-4">
           <div className="flex items-center">
@@ -201,7 +236,6 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       <div className="container mx-auto pt-24 pb-10 px-4">
-        {/* Dashboard Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           {dashboardStats.map((stat, index) => (
             <Card key={index} className="bg-xforge-darkgray/60 border-xforge-teal/10 shadow-md hover:shadow-xl transition-all duration-300 hover:border-xforge-teal/30">
@@ -219,7 +253,7 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <Tabs defaultValue="retailers" className="w-full">
-          <TabsList className="grid grid-cols-4 mb-8 bg-xforge-darkgray/40 p-1">
+          <TabsList className="grid grid-cols-5 mb-8 bg-xforge-darkgray/40 p-1">
             <TabsTrigger value="retailers" className="data-[state=active]:bg-xforge-teal data-[state=active]:text-xforge-dark">
               <Users size={16} className="mr-2" />
               Top Retailers
@@ -231,6 +265,10 @@ const AdminDashboard: React.FC = () => {
             <TabsTrigger value="winners" className="data-[state=active]:bg-xforge-teal data-[state=active]:text-xforge-dark">
               <Award size={16} className="mr-2" />
               Winners
+            </TabsTrigger>
+            <TabsTrigger value="prizes" className="data-[state=active]:bg-xforge-teal data-[state=active]:text-xforge-dark">
+              <Trophy size={16} className="mr-2" />
+              Prize Pool
             </TabsTrigger>
             <TabsTrigger value="games" className="data-[state=active]:bg-xforge-teal data-[state=active]:text-xforge-dark">
               <Gamepad size={16} className="mr-2" />
@@ -461,6 +499,117 @@ const AdminDashboard: React.FC = () => {
                 </TableBody>
               </Table>
             </div>
+          </TabsContent>
+
+          <TabsContent value="prizes" className="space-y-6 animate-fade-in">
+            <Card className="glass-dark border border-xforge-teal/10 shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-white text-xl">Add New Prize</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <Label htmlFor="prize-name" className="text-xforge-gray">Prize Name</Label>
+                    <Input 
+                      id="prize-name" 
+                      placeholder="e.g. iPhone 16" 
+                      value={newPrize.name}
+                      onChange={(e) => setNewPrize({...newPrize, name: e.target.value})}
+                      className="input-field bg-xforge-darkgray/30 border-xforge-gray/20 focus:border-xforge-teal"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="prize-description" className="text-xforge-gray">Description</Label>
+                    <Input 
+                      id="prize-description" 
+                      placeholder="Brief description" 
+                      value={newPrize.description}
+                      onChange={(e) => setNewPrize({...newPrize, description: e.target.value})}
+                      className="input-field bg-xforge-darkgray/30 border-xforge-gray/20 focus:border-xforge-teal"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="prize-quantity" className="text-xforge-gray">Quantity</Label>
+                    <Input 
+                      id="prize-quantity" 
+                      type="number" 
+                      placeholder="Number available" 
+                      value={newPrize.quantity || ''}
+                      onChange={(e) => setNewPrize({...newPrize, quantity: parseInt(e.target.value) || 1})}
+                      className="input-field bg-xforge-darkgray/30 border-xforge-gray/20 focus:border-xforge-teal"
+                      min="1"
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <Button 
+                      onClick={addPrize}
+                      className="bg-gradient-to-r from-xforge-teal to-cyan-500 text-xforge-dark hover:brightness-110 w-full shadow-glow"
+                    >
+                      <Plus size={16} className="mr-2" />
+                      Add Prize
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="glass-dark border border-xforge-teal/10 shadow-lg">
+              <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                <CardTitle className="text-white text-xl">Prize Pool</CardTitle>
+                <div className="bg-xforge-darkgray/60 px-3 py-1 rounded-full flex items-center text-xforge-gray text-sm">
+                  <Trophy size={14} className="mr-2 text-amber-400" />
+                  {prizes.reduce((total, prize) => total + prize.quantity, 0)} Total Prizes
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader className="bg-xforge-darkgray/30">
+                      <TableRow>
+                        <TableHead className="text-xforge-teal font-bold">ID</TableHead>
+                        <TableHead className="text-xforge-teal font-bold">Prize</TableHead>
+                        <TableHead className="text-xforge-teal font-bold">Description</TableHead>
+                        <TableHead className="text-xforge-teal font-bold">Quantity</TableHead>
+                        <TableHead className="text-xforge-teal font-bold">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {prizes.map((prize) => (
+                        <TableRow key={prize.id} className="hover:bg-xforge-teal/5 border-b border-xforge-darkgray/50">
+                          <TableCell className="font-medium">{prize.id}</TableCell>
+                          <TableCell>
+                            <span className="flex items-center">
+                              <Trophy size={16} className="text-amber-400 mr-2" />
+                              {prize.name}
+                            </span>
+                          </TableCell>
+                          <TableCell>{prize.description}</TableCell>
+                          <TableCell>
+                            <span className={`px-2 py-1 rounded-full ${
+                              prize.quantity > 3 ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                              prize.quantity > 1 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                              'bg-red-500/10 text-red-400 border border-red-500/20'
+                            }`}>
+                              {prize.quantity}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => deletePrize(prize.id)}
+                              className="hover:bg-red-700 transition-colors"
+                            >
+                              <Trash size={16} />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="games" className="glass-dark p-6 rounded-lg border border-xforge-teal/10 shadow-lg animate-fade-in">
