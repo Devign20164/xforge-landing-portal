@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from "react";
-import { Smartphone, Bike, Gift, Award, Sparkles } from "lucide-react";
+import { Smartphone, Bike, Gift, Award, Sparkles, X2, X3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useNotifications } from "@/context/NotificationsContext";
@@ -14,6 +14,7 @@ type Prize = {
   probability: number;
   type: 'minor' | 'major' | 'final';
   value: string;
+  multiplier?: number;
 };
 
 const SpinWheel: React.FC = () => {
@@ -26,17 +27,29 @@ const SpinWheel: React.FC = () => {
     const stored = localStorage.getItem('remainingSpins');
     return stored ? parseInt(stored) : 1; // Default to 1 spin per day
   });
+  const [currentMultiplier, setCurrentMultiplier] = useState(() => {
+    // Check if there's an active multiplier in localStorage
+    const storedMultiplier = localStorage.getItem('pointsMultiplier');
+    const storedExpiry = localStorage.getItem('multiplierExpiry');
+    
+    if (storedMultiplier && storedExpiry && new Date(storedExpiry) > new Date()) {
+      return parseInt(storedMultiplier);
+    }
+    return 1; // Default multiplier
+  });
   const { addNotification } = useNotifications();
   const wheelRef = useRef<HTMLDivElement>(null);
 
   // Define wheel prizes
   const prizes: Prize[] = [
-    { id: 1, name: "25 Points", icon: <Gift className="h-6 w-6" />, color: "#f97316", probability: 0.30, type: 'minor', value: "25 Points" },
+    { id: 1, name: "25 Points", icon: <Gift className="h-6 w-6" />, color: "#f97316", probability: 0.28, type: 'minor', value: "25 Points" },
     { id: 2, name: "XForge Bike", icon: <Bike className="h-6 w-6" />, color: "#8b5cf6", probability: 0.05, type: 'major', value: "XForge Bike" },
-    { id: 3, name: "50 Points", icon: <Gift className="h-6 w-6" />, color: "#06b6d4", probability: 0.20, type: 'minor', value: "50 Points" },
+    { id: 3, name: "50 Points", icon: <Gift className="h-6 w-6" />, color: "#06b6d4", probability: 0.18, type: 'minor', value: "50 Points" },
     { id: 4, name: "iPhone 16", icon: <Smartphone className="h-6 w-6" />, color: "#ec4899", probability: 0.01, type: 'final', value: "iPhone 16" },
-    { id: 5, name: "10 Points", icon: <Gift className="h-6 w-6" />, color: "#84cc16", probability: 0.35, type: 'minor', value: "10 Points" },
+    { id: 5, name: "10 Points", icon: <Gift className="h-6 w-6" />, color: "#84cc16", probability: 0.32, type: 'minor', value: "10 Points" },
     { id: 6, name: "75 Points", icon: <Gift className="h-6 w-6" />, color: "#eab308", probability: 0.09, type: 'minor', value: "75 Points" },
+    { id: 7, name: "2x Multiplier", icon: <div className="text-white font-bold text-sm">2x</div>, color: "#f43f5e", probability: 0.05, type: 'minor', value: "2x Points Multiplier", multiplier: 2 },
+    { id: 8, name: "3x Multiplier", icon: <div className="text-white font-bold text-sm">3x</div>, color: "#d946ef", probability: 0.02, type: 'minor', value: "3x Points Multiplier", multiplier: 3 },
   ];
 
   // Check and update remaining spins daily
@@ -47,6 +60,14 @@ const SpinWheel: React.FC = () => {
     if (lastSpinDate !== today) {
       setRemainingSpins(1);
       localStorage.setItem('remainingSpins', '1');
+    }
+    
+    // Check if multiplier has expired
+    const multiplierExpiry = localStorage.getItem('multiplierExpiry');
+    if (multiplierExpiry && new Date(multiplierExpiry) <= new Date()) {
+      setCurrentMultiplier(1);
+      localStorage.removeItem('pointsMultiplier');
+      localStorage.removeItem('multiplierExpiry');
     }
   }, []);
 
@@ -100,6 +121,17 @@ const SpinWheel: React.FC = () => {
       setIsSpinning(false);
       setShowResult(true);
       
+      // If it's a multiplier prize, set it active for 24 hours
+      if (prize.multiplier) {
+        const expiryDate = new Date();
+        expiryDate.setHours(expiryDate.getHours() + 24); // 24 hour expiry
+        
+        localStorage.setItem('pointsMultiplier', prize.multiplier.toString());
+        localStorage.setItem('multiplierExpiry', expiryDate.toString());
+        
+        setCurrentMultiplier(prize.multiplier);
+      }
+      
       // Add notification
       addNotification({
         title: "Prize Won!",
@@ -123,6 +155,14 @@ const SpinWheel: React.FC = () => {
           Try your luck with our prize wheel! Win points, products, or even an iPhone 16.
           You have {remainingSpins} spin{remainingSpins !== 1 ? 's' : ''} remaining today.
         </p>
+        
+        {/* Multiplier Badge */}
+        {currentMultiplier > 1 && (
+          <div className="inline-flex items-center bg-gradient-to-r from-pink-600 to-purple-600 px-4 py-2 rounded-full text-white font-bold animate-pulse-light">
+            <Sparkles className="h-4 w-4 mr-2" />
+            {currentMultiplier}x Point Multiplier Active!
+          </div>
+        )}
       </div>
       
       <div className="relative">
@@ -201,8 +241,11 @@ const SpinWheel: React.FC = () => {
                 {selectedPrize.icon}
               </div>
               <h3 className="text-2xl font-bold text-white mb-2">{selectedPrize.name}</h3>
-              {selectedPrize.type === 'minor' && (
+              {selectedPrize.type === 'minor' && !selectedPrize.multiplier && (
                 <p className="text-xforge-gray text-center">You've won some points! These have been added to your account.</p>
+              )}
+              {selectedPrize.multiplier && (
+                <p className="text-xforge-gray text-center">You've activated a {selectedPrize.multiplier}x point multiplier for 24 hours! All points earned will be multiplied.</p>
               )}
               {selectedPrize.type === 'major' && (
                 <p className="text-xforge-gray text-center">You've won an XForge Bike! Contact customer support to claim your prize.</p>
