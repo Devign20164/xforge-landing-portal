@@ -18,6 +18,9 @@ const Index: React.FC = () => {
     };
 
     checkAuth();
+    
+    // Add event listener to detect authentication changes
+    window.addEventListener("storage", checkAuth);
 
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -41,6 +44,7 @@ const Index: React.FC = () => {
       document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.removeEventListener('click', function() {});
       });
+      window.removeEventListener("storage", checkAuth);
     };
   }, []);
 
