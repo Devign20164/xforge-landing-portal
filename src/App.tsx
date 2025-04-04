@@ -14,6 +14,7 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import NotFound from "./pages/NotFound";
+import RetailersLanding from "./pages/RetailersLanding";
 import { NotificationsProvider } from "./context/NotificationsContext";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/promocodes" element={<PromoCodes />} />
             <Route path="/rewards" element={<Rewards />} />
             <Route path="/account" element={<AccountSettings />} />
+            <Route path="/retailers" element={<RetailersLanding />} />
             {/* Admin routes */}
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={
