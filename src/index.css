@@ -310,3 +310,23 @@
 .animate-spin-slow {
   animation: spin-slow 0.3s ease-in-out infinite;
 }
+
+/* Slot machine reel spinning */
+@keyframes reelSpin {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(0); }
+}
+
+.slot-reel {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.slot-symbol {
+  transition: transform 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+}
+
+.slot-spinning .slot-symbol {
+  animation: reelSpin 0.5s infinite linear;
+}

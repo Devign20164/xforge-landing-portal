@@ -20,6 +20,7 @@ import {
 // Game configuration
 const REELS = 5;
 const ROWS = 4;
+const BET_AMOUNTS = [1, 2, 5, 10, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250];
 const SYMBOLS = [
   { id: 1, icon: <Diamond className="h-8 w-8 text-red-400" />, name: "Diamond", value: 5 },
   { id: 2, icon: <Crown className="h-8 w-8 text-yellow-400" />, name: "Crown", value: 4 },
@@ -52,6 +53,7 @@ interface GameState {
   goldenCards: GoldenCardPosition[];
   winningPositions: Position[];
   hasWon: boolean;
+  reelAnimations: boolean[];
 }
 
 const SuperAce: React.FC = () => {
@@ -60,7 +62,7 @@ const SuperAce: React.FC = () => {
     spinning: false,
     wins: 0,
     balance: 2000,
-    betAmount: 100,
+    betAmount: 10,
     freeSpins: 0,
     currentFreeSpins: 0,
     cascadeLevel: 0,
@@ -68,7 +70,23 @@ const SuperAce: React.FC = () => {
     goldenCards: [],
     winningPositions: [],
     hasWon: false,
+    reelAnimations: Array(REELS).fill(false),
   });
+  
+  // Animation reels - one for each column
+  const [visibleSymbols, setVisibleSymbols] = useState<SlotSymbol[][]>(
+    Array(ROWS).fill(null).map(() => Array(REELS).fill(SYMBOLS[0]))
+  );
+  
+  const [animationReels, setAnimationReels] = useState<SlotSymbol[][][]>(
+    Array(REELS).fill(null).map(() => 
+      Array(ROWS * 3).fill(null).map(() => 
+        getRandomSymbol()
+      )
+    )
+  );
+  
+  const [betIndex, setBetIndex] = useState(3); // start with 10 (index 3)
   
   const spinSound = useRef<HTMLAudioElement | null>(null);
   const winSound = useRef<HTMLAudioElement | null>(null);
@@ -114,7 +132,7 @@ const SuperAce: React.FC = () => {
     return (col >= 1 && col <= 3) && Math.random() < 0.2;
   };
   
-  // Spin the reels
+  // Spin the reels with animation
   const spinReels = () => {
     if (gameState.spinning || gameState.balance < gameState.betAmount) {
       return;
@@ -126,13 +144,22 @@ const SuperAce: React.FC = () => {
       spinSound.current.play().catch(() => {});
     }
     
+    // Start animation for all reels
     setGameState(prev => ({
       ...prev,
       spinning: true,
       hasWon: false,
       winningPositions: [],
       balance: prev.currentFreeSpins > 0 ? prev.balance : prev.balance - prev.betAmount,
+      reelAnimations: Array(REELS).fill(true),
     }));
+    
+    // Generate new animation reels
+    const newAnimationReels = Array(REELS).fill(null).map(() => 
+      Array(ROWS * 3).fill(null).map(() => getRandomSymbol())
+    );
+    
+    setAnimationReels(newAnimationReels);
     
     // Generate golden card positions (only on reels 2-4)
     const newGoldenCards: GoldenCardPosition[] = [];
@@ -144,24 +171,55 @@ const SuperAce: React.FC = () => {
       }
     }
     
-    // Generate random grid
-    setTimeout(() => {
-      const newGrid = Array(ROWS).fill(null).map(() => 
-        Array(REELS).fill(null).map(() => getRandomSymbol())
-      );
-      
-      setGameState(prev => ({
-        ...prev,
-        grid: newGrid,
-        spinning: false,
-        goldenCards: newGoldenCards,
-        cascadeLevel: 0,
-        currentMultiplier: prev.currentFreeSpins > 0 ? FREE_SPIN_MULTIPLIERS[0] : BASE_MULTIPLIERS[0],
-      }));
-      
-      // Check for wins after spinning
-      checkWins(newGrid, newGoldenCards);
-    }, 1200);
+    // Generate random final grid
+    const newGrid = Array(ROWS).fill(null).map(() => 
+      Array(REELS).fill(null).map(() => getRandomSymbol())
+    );
+    
+    // Start staggered reel animations
+    const stopReels = () => {
+      for (let i = 0; i < REELS; i++) {
+        setTimeout(() => {
+          // Stop this reel's animation
+          setGameState(prev => {
+            const newReelAnimations = [...prev.reelAnimations];
+            newReelAnimations[i] = false;
+            
+            // Update visible symbols for this reel
+            const newVisibleSymbols = [...visibleSymbols];
+            for (let row = 0; row < ROWS; row++) {
+              newVisibleSymbols[row][i] = newGrid[row][i];
+            }
+            setVisibleSymbols(newVisibleSymbols);
+            
+            // If this is the last reel, complete the spin
+            if (i === REELS - 1) {
+              setTimeout(() => {
+                setGameState(prev => ({
+                  ...prev,
+                  grid: newGrid,
+                  spinning: false,
+                  goldenCards: newGoldenCards,
+                  cascadeLevel: 0,
+                  currentMultiplier: prev.currentFreeSpins > 0 ? FREE_SPIN_MULTIPLIERS[0] : BASE_MULTIPLIERS[0],
+                }));
+                
+                // Check for wins after spinning
+                checkWins(newGrid, newGoldenCards);
+              }, 200);
+            }
+            
+            return {
+              ...prev,
+              reelAnimations: newReelAnimations,
+            };
+          });
+        }, 300 + (i * 200)); // Stagger the stopping of reels
+      }
+    };
+    
+    // Stop the reels after a delay
+    setTimeout(stopReels, 700);
   };
   
   // Check for winning combinations
@@ -346,13 +404,21 @@ const SuperAce: React.FC = () => {
   };
   
   // Adjust bet amount
-  const adjustBet = (amount: number) => {
+  const adjustBet = (direction: 'increase' | 'decrease') => {
     if (gameState.spinning) return;
     
-    setGameState(prev => ({
-      ...prev,
-      betAmount: Math.max(50, Math.min(500, prev.betAmount + amount)),
-    }));
+    setBetIndex(prev => {
+      const newIndex = direction === 'increase' 
+        ? Math.min(prev + 1, BET_AMOUNTS.length - 1)
+        : Math.max(prev - 1, 0);
+      
+      setGameState(prevState => ({
+        ...prevState,
+        betAmount: BET_AMOUNTS[newIndex]
+      }));
+      
+      return newIndex;
+    });
   };
   
   // Reset the game
@@ -362,7 +428,7 @@ const SuperAce: React.FC = () => {
       spinning: false,
       wins: 0,
       balance: 2000,
-      betAmount: 100,
+      betAmount: BET_AMOUNTS[betIndex],
       freeSpins: 0,
       currentFreeSpins: 0,
       cascadeLevel: 0,
@@ -370,13 +436,44 @@ const SuperAce: React.FC = () => {
       goldenCards: [],
       winningPositions: [],
       hasWon: false,
+      reelAnimations: Array(REELS).fill(false),
     });
+    
+    setVisibleSymbols(Array(ROWS).fill(null).map(() => Array(REELS).fill(SYMBOLS[0])));
     
     toast.success("Game Reset", {
       description: "Your balance has been reset to 2000 points.",
       position: "top-center"
     });
   };
+  
+  // Generate animation frames for spinning reels
+  useEffect(() => {
+    if (!gameState.spinning) return;
+    
+    const animationInterval = setInterval(() => {
+      // Rotate the animation reel symbols
+      const newAnimationReels = [...animationReels];
+      
+      for (let col = 0; col < REELS; col++) {
+        if (gameState.reelAnimations[col]) {
+          // Shift symbols down in the animation reel
+          newAnimationReels[col].unshift(newAnimationReels[col].pop()!);
+          
+          // Update the visible symbols from the animation reels
+          const newVisibleSymbols = [...visibleSymbols];
+          for (let row = 0; row < ROWS; row++) {
+            newVisibleSymbols[row][col] = newAnimationReels[col][row + ROWS];
+          }
+          setVisibleSymbols(newVisibleSymbols);
+        }
+      }
+      
+      setAnimationReels(newAnimationReels);
+    }, 50); // Update animation frames rapidly
+    
+    return () => clearInterval(animationInterval);
+  }, [gameState.spinning, gameState.reelAnimations, animationReels]);
   
   // Auto-spin free spins
   useEffect(() => {
@@ -427,9 +524,9 @@ const SuperAce: React.FC = () => {
       </div>
       
       {/* Slot Grid */}
-      <div className="bg-[#1A1A1A]/80 backdrop-blur-sm p-4 rounded-xl border border-white/10 mb-6">
-        <div className="grid grid-cols-5 gap-1 p-2 bg-[#0F0F0F] rounded-lg">
-          {gameState.grid.map((row, rowIndex) => (
+      <div className="bg-[#1A1A1A]/80 backdrop-blur-sm p-4 rounded-xl border border-white/10 mb-6 overflow-hidden">
+        <div className="grid grid-cols-5 gap-1 p-2 bg-[#0F0F0F] rounded-lg relative">
+          {visibleSymbols.map((row, rowIndex) => (
             <React.Fragment key={`row-${rowIndex}`}>
               {row.map((symbol, colIndex) => {
                 const isWinningPosition = gameState.winningPositions.some(
@@ -438,6 +535,7 @@ const SuperAce: React.FC = () => {
                 const isGoldenCard = gameState.goldenCards.some(
                   pos => pos && pos.row === rowIndex && pos.col === colIndex
                 );
+                const isSpinning = gameState.spinning && gameState.reelAnimations[colIndex];
                 
                 return (
                   <div 
@@ -448,12 +546,12 @@ const SuperAce: React.FC = () => {
                         : isGoldenCard 
                           ? 'bg-gradient-to-r from-yellow-500/30 to-amber-300/30' 
                           : 'bg-[#1E1E1E]'
-                    } ${gameState.spinning ? 'animate-spin-slow' : ''}`}
+                    } ${isSpinning ? 'slot-reel' : ''}`}
                   >
                     {/* Symbol */}
                     <div className={`transform transition-all duration-300 ${
                       isWinningPosition ? 'scale-125' : ''
-                    }`}>
+                    } ${isSpinning ? 'slot-symbol' : ''}`}>
                       {symbol.icon}
                     </div>
                     
@@ -473,8 +571,8 @@ const SuperAce: React.FC = () => {
       <div className="flex flex-col md:flex-row items-center gap-4 mb-6 w-full max-w-2xl">
         <div className="flex items-center gap-2 bg-xforge-dark/80 backdrop-blur-sm p-2 rounded-lg border border-white/10">
           <button 
-            onClick={() => adjustBet(-50)}
-            disabled={gameState.spinning || gameState.betAmount <= 50}
+            onClick={() => adjustBet('decrease')}
+            disabled={gameState.spinning || betIndex <= 0}
             className="w-10 h-10 flex items-center justify-center rounded-md bg-[#1E1E1E] text-white hover:bg-[#2E2E2E] disabled:opacity-50"
           >
             -
@@ -484,8 +582,8 @@ const SuperAce: React.FC = () => {
             <p className="text-white font-bold">{gameState.betAmount}</p>
           </div>
           <button 
-            onClick={() => adjustBet(50)}
-            disabled={gameState.spinning || gameState.betAmount >= 500}
+            onClick={() => adjustBet('increase')}
+            disabled={gameState.spinning || betIndex >= BET_AMOUNTS.length - 1}
             className="w-10 h-10 flex items-center justify-center rounded-md bg-[#1E1E1E] text-white hover:bg-[#2E2E2E] disabled:opacity-50"
           >
             +
@@ -513,6 +611,29 @@ const SuperAce: React.FC = () => {
         >
           <RotateCw className="h-5 w-5" />
         </button>
+      </div>
+      
+      {/* Bet Amounts Display */}
+      <div className="flex flex-wrap justify-center gap-2 mb-6 max-w-2xl">
+        {BET_AMOUNTS.map((amount, index) => (
+          <button
+            key={`bet-${amount}`}
+            onClick={() => {
+              if (!gameState.spinning) {
+                setBetIndex(index);
+                setGameState(prev => ({ ...prev, betAmount: amount }));
+              }
+            }}
+            disabled={gameState.spinning}
+            className={`px-2 py-1 min-w-12 text-sm rounded ${
+              betIndex === index 
+                ? 'bg-xforge-teal text-xforge-dark font-bold' 
+                : 'bg-xforge-dark/80 text-white hover:bg-xforge-darkgray'
+            } transition-all duration-200`}
+          >
+            {amount}
+          </button>
+        ))}
       </div>
       
       {/* Game Information */}
