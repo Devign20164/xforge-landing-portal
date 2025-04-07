@@ -102,7 +102,11 @@ const AccountSettings: React.FC = () => {
     }, 1500);
   };
 
-  const handleVerifyEmail = () => {
+  const handleVerifyEmail = (e: React.MouseEvent) => {
+    // Prevent default to avoid any navigation/form submission
+    e.preventDefault();
+    e.stopPropagation();
+    
     setVerifying(true);
     
     // Simulate sending OTP to email
@@ -217,6 +221,14 @@ const AccountSettings: React.FC = () => {
       message: "The payment method has been removed from your account.",
       type: "success"
     });
+  };
+
+  // Reset OTP value when the dialog is closed
+  const handleOTPDialogOpenChange = (open: boolean) => {
+    setShowOTPDialog(open);
+    if (!open) {
+      setOtpValue("");
+    }
   };
 
   return (
@@ -731,7 +743,7 @@ const AccountSettings: React.FC = () => {
       <Footer />
 
       {/* OTP Verification Dialog */}
-      <Dialog open={showOTPDialog} onOpenChange={setShowOTPDialog}>
+      <Dialog open={showOTPDialog} onOpenChange={handleOTPDialogOpenChange}>
         <DialogContent className="bg-xforge-dark border border-xforge-teal/30 text-white">
           <DialogHeader>
             <DialogTitle className="text-center text-xl">Email Verification</DialogTitle>

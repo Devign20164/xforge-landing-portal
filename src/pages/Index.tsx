@@ -21,6 +21,8 @@ const Index: React.FC = () => {
     
     // Add event listener to detect authentication changes
     window.addEventListener("storage", checkAuth);
+    // Also listen for custom events for immediate updates
+    window.addEventListener("auth-changed", checkAuth);
 
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -45,6 +47,7 @@ const Index: React.FC = () => {
         anchor.removeEventListener('click', function() {});
       });
       window.removeEventListener("storage", checkAuth);
+      window.removeEventListener("auth-changed", checkAuth);
     };
   }, []);
 
