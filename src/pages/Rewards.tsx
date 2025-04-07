@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import SpinWheel from "../components/SpinWheel";
 import SlotMachine from "../components/SlotMachine";
 import UserActivities from "../components/UserActivities";
+import MemoryGame from "../components/MemoryGame";
 import { Award, ChevronDown, ChevronUp, Check, Gift, Star, Sparkles, Tag, Clock, Dices, Trophy, Target, Zap, Gamepad, Crown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
@@ -131,10 +132,7 @@ const Rewards: React.FC = () => {
   ];
 
   const playMemoryGame = () => {
-    toast.success("Coming Soon!", {
-      description: "The Memory game will be available in our next update!",
-      position: "top-center"
-    });
+    setActiveGameTab('memory');
   };
 
   const playQuizGame = () => {
@@ -381,26 +379,12 @@ const Rewards: React.FC = () => {
                   <SlotMachine />
                 </div>
                 
-                {/* Memory Game (Coming Soon) */}
+                {/* Memory Game */}
                 <div className={`transition-all duration-500 h-full ${activeGameTab === 'memory' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 absolute pointer-events-none'}`}>
-                  <div className="flex flex-col items-center justify-center h-full py-16">
-                    <div className="bg-xforge-teal/20 p-6 rounded-full mb-6">
-                      <Target className="h-16 w-16 text-xforge-teal" />
-                    </div>
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Memory Match Challenge</h3>
-                    <p className="text-xforge-gray text-center max-w-md mb-8">
-                      Test your memory skills by matching XForge product pairs. The faster you match, the more points you earn!
-                    </p>
-                    <button 
-                      onClick={playMemoryGame}
-                      className="px-8 py-4 bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark font-bold rounded-full hover:shadow-lg hover:shadow-xforge-teal/20 transition-all duration-300"
-                    >
-                      Coming Soon
-                    </button>
-                  </div>
+                  <MemoryGame />
                 </div>
                 
-                {/* XForge Quiz (Coming Soon) */}
+                {/* XForge Quiz */}
                 <div className={`transition-all duration-500 h-full ${activeGameTab === 'quiz' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 absolute pointer-events-none'}`}>
                   <div className="flex flex-col items-center justify-center h-full py-16">
                     <div className="bg-[#8B5CF6]/20 p-6 rounded-full mb-6">
@@ -419,7 +403,7 @@ const Rewards: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* Daily Challenge (Coming Soon) */}
+                {/* Daily Challenge */}
                 <div className={`transition-all duration-500 h-full ${activeGameTab === 'daily' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 absolute pointer-events-none'}`}>
                   <div className="flex flex-col items-center justify-center h-full py-16">
                     <div className="bg-[#F97316]/20 p-6 rounded-full mb-6">
