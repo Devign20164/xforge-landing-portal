@@ -5,6 +5,7 @@ import SpinWheel from "../components/SpinWheel";
 import SlotMachine from "../components/SlotMachine";
 import UserActivities from "../components/UserActivities";
 import MemoryGame from "../components/MemoryGame";
+import SuperAce from "../components/SuperAce";
 import { Award, ChevronDown, ChevronUp, Check, Gift, Star, Sparkles, Tag, Clock, Dices, Trophy, Target, Zap, Gamepad, Crown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
@@ -330,6 +331,16 @@ const Rewards: React.FC = () => {
                 </button>
                 <button
                   className={`px-6 py-3 rounded-full transition-all duration-300 ${
+                    activeGameTab === 'superace' 
+                      ? 'bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark font-bold' 
+                      : 'text-xforge-gray hover:text-white'
+                  }`}
+                  onClick={() => setActiveGameTab('superace')}
+                >
+                  Super Ace
+                </button>
+                <button
+                  className={`px-6 py-3 rounded-full transition-all duration-300 ${
                     activeGameTab === 'memory' 
                       ? 'bg-gradient-to-r from-xforge-teal to-[#02c4af] text-xforge-dark font-bold' 
                       : 'text-xforge-gray hover:text-white'
@@ -377,6 +388,11 @@ const Rewards: React.FC = () => {
                 {/* Slot Machine Game */}
                 <div className={`transition-all duration-500 ${activeGameTab === 'slots' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 absolute pointer-events-none'}`}>
                   <SlotMachine />
+                </div>
+                
+                {/* Super Ace Game */}
+                <div className={`transition-all duration-500 ${activeGameTab === 'superace' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 absolute pointer-events-none'}`}>
+                  <SuperAce />
                 </div>
                 
                 {/* Memory Game */}
