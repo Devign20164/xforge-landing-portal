@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -9,14 +10,37 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Lock, Bell, CreditCard, LogOut, Shield, Settings, HelpCircle, Smartphone, Mail, Eye, EyeOff } from "lucide-react";
+import { 
+  User, Lock, Bell, CreditCard, LogOut, Shield, Settings, 
+  HelpCircle, Smartphone, Mail, Eye, EyeOff, CheckCircle, AlertCircle
+} from "lucide-react";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle 
+} from "@/components/ui/dialog";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+} from "@/components/ui/input-otp";
+import { useToast } from "@/hooks/use-toast";
 
 const AccountSettings: React.FC = () => {
   const { addNotification } = useNotifications();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("profile");
   const [showPassword, setShowPassword] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [showOTPDialog, setShowOTPDialog] = useState(false);
+  const [otpValue, setOtpValue] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
 
   // User profile state
   const [profile, setProfile] = useState({
@@ -25,7 +49,8 @@ const AccountSettings: React.FC = () => {
     email: "john.doe@example.com",
     phone: "+1 (555) 123-4567",
     address: "123 Main St, Anytown, USA",
-    bio: "Vaping enthusiast and XForge community member since 2022."
+    bio: "Vaping enthusiast and XForge community member since 2022.",
+    verified: false
   });
 
   // Notification settings state
@@ -50,6 +75,14 @@ const AccountSettings: React.FC = () => {
     { id: 2, type: "mastercard", last4: "5555", expiry: "08/24", default: false }
   ]);
 
+  // Effect to check if user is verified
+  useEffect(() => {
+    // Simulate checking if user is verified from localStorage or API
+    const userVerified = localStorage.getItem("userVerified") === "true";
+    setIsVerified(userVerified);
+    setProfile(prev => ({ ...prev, verified: userVerified }));
+  }, []);
+
   const handleProfileUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -66,6 +99,52 @@ const AccountSettings: React.FC = () => {
       });
       
       setTimeout(() => setFormSubmitted(false), 3000);
+    }, 1500);
+  };
+
+  const handleVerifyEmail = () => {
+    setVerifying(true);
+    
+    // Simulate sending OTP to email
+    setTimeout(() => {
+      setVerifying(false);
+      setShowOTPDialog(true);
+      
+      toast({
+        title: "Verification Code Sent",
+        description: "A 6-digit verification code has been sent to your email address.",
+      });
+    }, 1500);
+  };
+
+  const handleVerifyOTP = () => {
+    setVerifying(true);
+    
+    // Simulate OTP verification
+    setTimeout(() => {
+      setVerifying(false);
+      
+      // Check if OTP is correct (in a real app this would be validated against backend)
+      // For demo, we'll assume correct OTP is "123456"
+      if (otpValue === "123456") {
+        setIsVerified(true);
+        setProfile(prev => ({ ...prev, verified: true }));
+        localStorage.setItem("userVerified", "true");
+        
+        setShowOTPDialog(false);
+        
+        toast({
+          title: "Email Verified",
+          description: "Your email has been successfully verified.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Invalid Code",
+          description: "The verification code you entered is incorrect. Please try again.",
+          variant: "destructive",
+        });
+      }
     }, 1500);
   };
 
@@ -247,13 +326,45 @@ const AccountSettings: React.FC = () => {
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="email" className="text-xforge-gray">Email Address</Label>
-                            <Input 
-                              id="email" 
-                              type="email"
-                              value={profile.email}
-                              onChange={(e) => setProfile({...profile, email: e.target.value})}
-                              className="bg-xforge-dark/50 border-xforge-lightgray/30 focus:border-xforge-teal"
-                            />
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 relative">
+                                <Input 
+                                  id="email" 
+                                  type="email"
+                                  value={profile.email}
+                                  onChange={(e) => setProfile({...profile, email: e.target.value})}
+                                  className="bg-xforge-dark/50 border-xforge-lightgray/30 focus:border-xforge-teal pr-10"
+                                  readOnly={isVerified}
+                                />
+                                {isVerified && (
+                                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                  </span>
+                                )}
+                              </div>
+                              {!isVerified && (
+                                <Button 
+                                  type="button" 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={handleVerifyEmail}
+                                  disabled={verifying}
+                                  className="shrink-0 border-xforge-teal text-xforge-teal hover:bg-xforge-teal hover:text-xforge-dark whitespace-nowrap"
+                                >
+                                  {verifying ? "Sending..." : "Verify Email"}
+                                </Button>
+                              )}
+                            </div>
+                            {!isVerified && (
+                              <p className="text-xs text-amber-400/80 flex items-center gap-1 mt-1">
+                                <AlertCircle className="h-3 w-3" /> Please verify your email address for full account access
+                              </p>
+                            )}
+                            {isVerified && (
+                              <p className="text-xs text-green-500/80 flex items-center gap-1 mt-1">
+                                <CheckCircle className="h-3 w-3" /> Email verified
+                              </p>
+                            )}
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="phone" className="text-xforge-gray">Phone Number</Label>
@@ -618,6 +729,54 @@ const AccountSettings: React.FC = () => {
         </div>
       </main>
       <Footer />
+
+      {/* OTP Verification Dialog */}
+      <Dialog open={showOTPDialog} onOpenChange={setShowOTPDialog}>
+        <DialogContent className="bg-xforge-dark border border-xforge-teal/30 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">Email Verification</DialogTitle>
+            <DialogDescription className="text-center text-xforge-gray">
+              Enter the 6-digit verification code sent to your email
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex justify-center py-4">
+            <InputOTP
+              maxLength={6}
+              value={otpValue}
+              onChange={setOtpValue}
+              render={({ slots }) => (
+                <InputOTPGroup className="gap-2">
+                  {slots.map((slot, index) => (
+                    <React.Fragment key={index}>
+                      <InputOTPSlot
+                        {...slot}
+                        index={index}
+                        className="bg-xforge-dark/70 border-xforge-teal/30 text-white focus:border-xforge-teal/60"
+                      />
+                      {index === 2 && <InputOTPSeparator className="text-xforge-teal">-</InputOTPSeparator>}
+                    </React.Fragment>
+                  ))}
+                </InputOTPGroup>
+              )}
+            />
+          </div>
+          
+          <p className="text-sm text-center text-xforge-gray pb-2">
+            Didn't receive a code? <Button variant="link" className="p-0 h-auto text-xforge-teal">Resend</Button>
+          </p>
+          
+          <DialogFooter>
+            <Button 
+              onClick={handleVerifyOTP}
+              disabled={otpValue.length < 6 || verifying}
+              className="w-full bg-gradient-to-r from-xforge-teal to-teal-400 text-xforge-dark hover:brightness-110"
+            >
+              {verifying ? "Verifying..." : "Verify Email"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
