@@ -2,10 +2,13 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { BadgePercent, CheckCircle, AlertCircle, Copy, Gift, Clock, Calendar, Tag, BadgeCheck, Zap } from "lucide-react";
+import { BadgePercent, CheckCircle, AlertCircle, Copy, Gift, Clock, Calendar, Tag, BadgeCheck, Zap, Sparkles, Award, BookOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
 import { useNotifications } from "@/context/NotificationsContext";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const PromoCodes: React.FC = () => {
   const [promoCode, setPromoCode] = useState("");
@@ -94,115 +97,149 @@ const PromoCodes: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-xforge-dark overflow-hidden relative">
-      {/* Decorative elements */}
-      <div className="absolute top-20 left-0 w-72 h-72 bg-xforge-teal/10 rounded-full blur-3xl -z-10"></div>
-      <div className="absolute bottom-20 right-0 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl -z-10"></div>
-      <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl -z-10"></div>
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-xforge-dark to-black overflow-hidden relative">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/6 w-64 h-64 rounded-full bg-xforge-teal/5 blur-3xl animate-float" style={{ animationDelay: "0s" }}></div>
+        <div className="absolute top-2/3 right-1/5 w-96 h-96 rounded-full bg-purple-500/5 blur-3xl animate-float" style={{ animationDelay: "2s" }}></div>
+        <div className="absolute bottom-1/3 left-1/3 w-80 h-80 rounded-full bg-pink-500/5 blur-3xl animate-float" style={{ animationDelay: "4s" }}></div>
+      </div>
       
       <Header />
-      <main className="flex-grow container mx-auto px-4 pt-32 pb-16 relative">
-        {/* Hero Section */}
-        <div className="text-center mb-16 relative">
-          <div className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-xforge-teal/30 to-xforge-teal/10 backdrop-blur-md rounded-full mb-6 shadow-xl border border-xforge-teal/20 animate-pulse-light">
-            <BadgePercent className="h-8 w-8 text-xforge-teal" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-xforge-teal to-cyan-400 animate-fade-in">
-            Exclusive Promo Codes
-          </h1>
-          <p className="text-xforge-gray max-w-2xl mx-auto text-lg leading-relaxed mb-8 animate-fade-in">
-            Unlock special rewards, earn points, and access exclusive offers with our promo codes.
-            Get started today and maximize your XForge experience!
-          </p>
-          <div className="w-32 h-1 bg-gradient-to-r from-xforge-teal via-teal-400 to-xforge-teal mx-auto rounded-full"></div>
-        </div>
-
-        {/* Featured Promo Cards - Updated with card flip design */}
-        <div className="max-w-5xl mx-auto mb-20">
-          <div className="flex items-center mb-8">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-xforge-teal to-cyan-400 flex items-center justify-center shadow-glow mr-3">
-              <Zap className="h-5 w-5 text-xforge-dark" />
-            </div>
-            <h2 className="text-3xl font-bold text-white">
-              Featured <span className="text-xforge-teal">Offers</span>
-            </h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredCodes.map((promo, index) => (
-              <div key={index} className="perspective-1000 h-64 group">
-                <div className="relative h-full w-full transform-style-3d transition-all duration-500 group-hover:rotate-y-180">
-                  {/* Front of card */}
-                  <div className="absolute h-full w-full backface-hidden rounded-xl overflow-hidden glass-dark border border-xforge-teal/30 shadow-xl bg-gradient-to-br from-xforge-darkgray/90 to-xforge-dark/95 p-6 flex flex-col justify-between">
-                    <div className="bg-xforge-teal/20 rounded-lg p-4 text-center mb-4">
-                      <h3 className="text-xforge-teal font-bold text-2xl mb-1">{promo.discount}</h3>
-                      <div className="inline-flex items-center justify-center bg-xforge-dark/40 px-3 py-1 rounded-full">
-                        <Calendar className="h-3 w-3 text-xforge-gray mr-1" />
-                        <span className="text-xforge-gray text-xs">Expires: {promo.expiry}</span>
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-xforge-gray mb-4">{promo.description}</p>
-                      <div className="text-sm text-xforge-gray">Hover to reveal code</div>
-                    </div>
-                  </div>
-                  
-                  {/* Back of card */}
-                  <div className="absolute h-full w-full backface-hidden rotate-y-180 rounded-xl glass-teal border border-xforge-teal shadow-glow flex flex-col items-center justify-center">
-                    <div className="text-center mb-4">
-                      <BadgeCheck className="h-10 w-10 text-xforge-teal mx-auto mb-2" />
-                      <h3 className="text-white text-xl font-bold">Your Promo Code</h3>
-                    </div>
-                    <div className="bg-xforge-dark/80 p-3 rounded-lg border border-xforge-teal/30 w-3/4 text-center mb-4">
-                      <code className="text-xforge-teal font-mono font-bold text-xl">{promo.code}</code>
-                    </div>
-                    <button 
-                      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-xforge-teal to-teal-500 rounded-full text-xforge-dark font-bold hover:brightness-110 transition-all shadow-glow"
-                      onClick={() => {
-                        navigator.clipboard.writeText(promo.code);
-                        toast.success("Code copied to clipboard!");
-                      }}
-                    >
-                      <Copy size={16} />
-                      Copy Code
-                    </button>
-                  </div>
+      <main className="flex-grow py-32">
+        <div className="container px-4 mx-auto">
+          {/* Hero Section with Improved Typography and Visual Hierarchy */}
+          <div className="max-w-3xl mx-auto text-center mb-20">
+            <div className="inline-flex items-center justify-center mb-6">
+              <div className="relative">
+                <div className="absolute inset-0 animate-pulse bg-xforge-teal/20 rounded-full blur-xl"></div>
+                <div className="relative p-5 rounded-full bg-gradient-to-br from-xforge-teal/20 to-transparent backdrop-blur-sm border border-xforge-teal/30">
+                  <Sparkles className="h-8 w-8 text-xforge-teal" />
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Redeem Code Section */}
-        <div className="max-w-3xl mx-auto mb-20">
-          <div className="relative">
-            <div className="absolute -top-10 -left-10 w-20 h-20 bg-gradient-to-br from-xforge-teal/20 to-transparent rounded-full blur-xl"></div>
-            <div className="absolute -bottom-10 -right-10 w-20 h-20 bg-gradient-to-br from-xforge-teal/20 to-transparent rounded-full blur-xl"></div>
+            </div>
             
-            <div className="relative glass-dark border border-xforge-teal/20 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-lg">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-xforge-teal via-teal-400 to-xforge-teal"></div>
+            <h1 className="text-5xl font-bold mb-6 relative">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/80">Exclusive</span>{" "}
+              <span className="relative">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-xforge-teal to-cyan-400">Promo Codes</span>
+                <span className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-xforge-teal/0 via-xforge-teal to-xforge-teal/0"></span>
+              </span>
+            </h1>
+            
+            <p className="text-xforge-gray/90 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
+              Unlock special rewards, earn points, and access exclusive offers with our promo codes.
+              Get started today and maximize your XForge experience!
+            </p>
+          </div>
+
+          {/* Featured Codes Section - Now with a premium card design */}
+          <div className="max-w-7xl mx-auto mb-24">
+            <div className="flex items-center mb-12">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500/20 to-transparent border border-amber-500/20 mr-4">
+                <Award className="h-6 w-6 text-amber-400" />
+              </div>
+              <h2 className="text-3xl font-bold">
+                <span className="text-white">Featured</span>{" "}
+                <span className="text-amber-400">Offers</span>
+              </h2>
+            </div>
+            
+            {/* Premium card design with hover effects and glassmorphism */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {featuredCodes.map((promo, index) => (
+                <div key={index} className="group h-[280px] perspective-1000">
+                  <div className="relative h-full w-full transition-all duration-700 transform-style-3d group-hover:rotate-y-180 rounded-2xl">
+                    {/* Card Front */}
+                    <div className="absolute inset-0 backface-hidden rounded-2xl overflow-hidden glass-dark backdrop-blur-md border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-6 flex flex-col justify-between bg-gradient-to-br from-[rgba(30,30,30,0.9)] to-[rgba(20,20,20,0.8)]">
+                      <div>
+                        <div className="mb-6 p-3 rounded-lg bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20">
+                          <h3 className="text-amber-400 font-bold text-2xl">{promo.discount}</h3>
+                        </div>
+                        <p className="text-xforge-gray mb-4">{promo.description}</p>
+                      </div>
+                      
+                      <div className="mt-auto">
+                        <div className="flex items-center text-xs text-xforge-gray/70 justify-center">
+                          <Calendar className="h-3 w-3 mr-1" />
+                          <span>Expires: {promo.expiry}</span>
+                        </div>
+                        <p className="mt-4 text-white/60 text-sm">
+                          <span className="inline-flex items-center">
+                            <BookOpen className="h-3 w-3 mr-1" />
+                            Hover to reveal code
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Card Back */}
+                    <div className="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl overflow-hidden bg-gradient-to-br from-xforge-teal/30 to-[rgba(20,20,20,0.9)] backdrop-blur-lg border border-xforge-teal/30 p-6 flex flex-col items-center justify-center">
+                      <div className="text-center space-y-6">
+                        <div className="mx-auto p-3 rounded-full bg-xforge-teal/20 border border-xforge-teal/30">
+                          <BadgeCheck className="h-8 w-8 text-xforge-teal" />
+                        </div>
+                        
+                        <div>
+                          <h3 className="text-white text-xl font-bold mb-2">Your Promo Code</h3>
+                          <div className="bg-xforge-dark/80 p-4 rounded-lg border border-xforge-teal/30 w-52 mx-auto mb-6">
+                            <code className="text-xforge-teal font-mono font-bold text-xl tracking-widest">{promo.code}</code>
+                          </div>
+                        </div>
+                        
+                        <Button 
+                          className="bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark hover:brightness-110 shadow-glow"
+                          onClick={() => {
+                            navigator.clipboard.writeText(promo.code);
+                            toast.success("Code copied to clipboard!");
+                          }}
+                        >
+                          <Copy size={16} className="mr-2" />
+                          Copy Code
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Redeem Code Section - Redesigned with modern UI */}
+          <div className="max-w-3xl mx-auto mb-24 relative">
+            {/* Decorative lighting effects */}
+            <div className="absolute -top-20 -left-20 w-40 h-40 bg-xforge-teal/10 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-xforge-teal/10 rounded-full blur-3xl"></div>
+            
+            <Card className="backdrop-blur-lg border-white/10 bg-gradient-to-br from-[rgba(30,30,30,0.8)] to-[rgba(20,20,20,0.7)] shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-xforge-teal/0 via-xforge-teal to-xforge-teal/0"></div>
               
               {status === "idle" && (
-                <form onSubmit={handleSubmit} className="p-10">
-                  <div className="flex items-center mb-8">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-xforge-teal/20 to-transparent flex items-center justify-center mr-3">
-                      <Tag className="h-6 w-6 text-xforge-teal" />
+                <form onSubmit={handleSubmit} className="p-8">
+                  <CardHeader className="px-0 pt-0">
+                    <div className="flex items-center mb-2">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-xforge-teal/20 to-transparent border border-xforge-teal/20 mr-4">
+                        <Tag className="h-6 w-6 text-xforge-teal" />
+                      </div>
+                      <CardTitle className="text-2xl font-bold text-white">Redeem Your Code</CardTitle>
                     </div>
-                    <h3 className="text-2xl font-bold text-white">Redeem Your Code</h3>
-                  </div>
+                    <CardDescription className="text-xforge-gray/80">
+                      Enter your promo code below to receive exclusive rewards and bonuses
+                    </CardDescription>
+                  </CardHeader>
                   
-                  <div className="mb-8">
+                  <CardContent className="px-0 py-6">
                     <div className="relative">
-                      <input
+                      <Input
                         type="text"
                         value={promoCode}
                         onChange={(e) => setPromoCode(e.target.value)}
                         placeholder="Enter your promo code here..."
-                        className="w-full px-5 py-4 bg-xforge-dark/80 border-2 border-xforge-lightgray/20 focus:border-xforge-teal rounded-xl text-white text-lg focus:outline-none transition-colors placeholder:text-xforge-gray/60"
+                        className="bg-xforge-dark/60 border-xforge-lightgray/20 focus:border-xforge-teal text-white placeholder:text-xforge-gray/60 py-6 pr-32"
                       />
-                      <button 
+                      <Button 
                         type="submit" 
-                        className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark font-bold rounded-lg hover:brightness-110 transition-all shadow-glow ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark hover:brightness-110 transition-all shadow-glow"
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? (
@@ -214,23 +251,25 @@ const PromoCodes: React.FC = () => {
                             Validating
                           </span>
                         ) : "Redeem"}
-                      </button>
+                      </Button>
                     </div>
-                  </div>
+                  </CardContent>
                   
-                  <div className="flex items-center bg-xforge-teal/5 border border-xforge-teal/10 rounded-lg p-4">
-                    <div className="bg-xforge-teal/10 rounded-full p-2 mr-3">
-                      <Gift className="h-5 w-5 text-xforge-teal" />
+                  <CardFooter className="p-0">
+                    <div className="w-full flex items-center p-4 rounded-lg bg-gradient-to-r from-xforge-teal/10 to-transparent border border-xforge-teal/10">
+                      <div className="bg-xforge-teal/10 rounded-full p-2 mr-3">
+                        <Gift className="h-5 w-5 text-xforge-teal" />
+                      </div>
+                      <p className="text-xforge-gray text-sm">
+                        Find exclusive promo codes on our product packaging, social media, or during special XForge events.
+                      </p>
                     </div>
-                    <p className="text-xforge-gray text-sm">
-                      Find exclusive promo codes on our product packaging, social media, or during special XForge events.
-                    </p>
-                  </div>
+                  </CardFooter>
                 </form>
               )}
               
               {status === "success" && (
-                <div className="p-10 text-center">
+                <div className="p-8 text-center">
                   <div className="w-24 h-24 mx-auto mb-6 relative">
                     <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping"></div>
                     <div className="relative w-full h-full bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-full flex items-center justify-center">
@@ -244,17 +283,17 @@ const PromoCodes: React.FC = () => {
                     You've earned 250 reward points with your promo code. 
                     Check your rewards page to see your updated balance.
                   </p>
-                  <button 
+                  <Button 
                     onClick={resetForm}
-                    className="px-8 py-3 bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark font-bold rounded-lg hover:brightness-110 transition-all duration-300 shadow-glow"
+                    className="bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark font-bold hover:brightness-110 transition-all shadow-glow px-8 py-6"
                   >
                     Redeem Another Code
-                  </button>
+                  </Button>
                 </div>
               )}
               
               {status === "error" && (
-                <div className="p-10 text-center">
+                <div className="p-8 text-center">
                   <div className="w-24 h-24 mx-auto mb-6 relative">
                     <div className="absolute inset-0 bg-red-500/20 rounded-full animate-pulse"></div>
                     <div className="relative w-full h-full bg-gradient-to-br from-red-500/20 to-red-500/10 rounded-full flex items-center justify-center">
@@ -268,124 +307,137 @@ const PromoCodes: React.FC = () => {
                     The promo code you entered is invalid or has expired.
                     Please check the code and try again.
                   </p>
-                  <button 
+                  <Button 
                     onClick={resetForm}
-                    className="px-8 py-3 bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark font-bold rounded-lg hover:brightness-110 transition-all duration-300 shadow-glow"
+                    className="bg-gradient-to-r from-xforge-teal to-teal-500 text-xforge-dark font-bold hover:brightness-110 transition-all shadow-glow px-8 py-6"
                   >
                     Try Again
-                  </button>
+                  </Button>
                 </div>
               )}
-            </div>
+            </Card>
           </div>
-        </div>
 
-        {/* Recent Redemptions Section */}
-        <div className="max-w-4xl mx-auto mb-20">
-          <div className="flex items-center mb-8">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-md mr-3">
-              <Gift className="h-5 w-5 text-xforge-dark" />
+          {/* Recent Redemptions Section */}
+          <div className="max-w-4xl mx-auto mb-24">
+            <div className="flex items-center mb-12">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-transparent border border-purple-500/20 mr-4">
+                <Gift className="h-6 w-6 text-purple-400" />
+              </div>
+              <h2 className="text-3xl font-bold">
+                <span className="text-white">Recent</span>{" "}
+                <span className="text-purple-400">Redemptions</span>
+              </h2>
             </div>
-            <h2 className="text-3xl font-bold text-white">
-              Recent <span className="text-amber-400">Redemptions</span>
-            </h2>
-          </div>
-          
-          {recentRedemptions.length > 0 ? (
-            <div className="glass-dark backdrop-blur-md rounded-xl overflow-hidden shadow-2xl border border-xforge-teal/10">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-xforge-lightgray/20">
-                      <th className="px-6 py-4 text-left text-xforge-teal">Code</th>
-                      <th className="px-6 py-4 text-left text-xforge-teal">Points Earned</th>
-                      <th className="px-6 py-4 text-left text-xforge-teal">Date Redeemed</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentRedemptions.map(redemption => (
-                      <tr key={redemption.id} className="border-b border-xforge-lightgray/10 hover:bg-xforge-dark/50 transition-colors">
-                        <td className="px-6 py-4">
-                          <span className="font-mono text-white bg-xforge-dark/80 px-3 py-1 rounded-md border border-xforge-teal/10">{redemption.code}</span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            <div className="h-6 w-6 rounded-full bg-amber-500/20 flex items-center justify-center mr-2">
-                              <Gift className="h-3 w-3 text-amber-400" />
-                            </div>
-                            <span className="text-amber-400 font-bold">{redemption.points}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center text-xforge-gray">
-                            <Clock className="h-4 w-4 mr-2" />
-                            {new Date(redemption.date).toLocaleDateString()}
-                          </div>
-                        </td>
+            
+            {recentRedemptions.length > 0 ? (
+              <Card className="backdrop-blur-lg border-white/10 bg-gradient-to-br from-[rgba(30,30,30,0.8)] to-[rgba(20,20,20,0.7)] shadow-[0_8px_30px_rgb(0,0,0,0.12)] overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-white/10">
+                        <th className="px-6 py-4 text-left text-purple-400 font-medium">Code</th>
+                        <th className="px-6 py-4 text-left text-purple-400 font-medium">Points Earned</th>
+                        <th className="px-6 py-4 text-left text-purple-400 font-medium">Date Redeemed</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ) : (
-            <div className="glass-dark rounded-xl p-8 text-center border border-xforge-teal/10 shadow-lg">
-              <p className="text-xforge-gray">
-                You haven't redeemed any promo codes yet.
-              </p>
-            </div>
-          )}
-        </div>
-        
-        {/* How It Works Section */}
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center mb-10">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500/50 to-pink-500/50 flex items-center justify-center shadow-md mr-3">
-              <BadgePercent className="h-5 w-5 text-white" />
-            </div>
-            <h2 className="text-3xl font-bold text-white">
-              How It <span className="text-purple-400">Works</span>
-            </h2>
+                    </thead>
+                    <tbody>
+                      {recentRedemptions.map(redemption => (
+                        <tr key={redemption.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                          <td className="px-6 py-4">
+                            <span className="font-mono text-white bg-xforge-dark/60 px-3 py-1 rounded-md border border-purple-500/10">{redemption.code}</span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center">
+                              <div className="h-6 w-6 rounded-full bg-purple-500/20 flex items-center justify-center mr-2">
+                                <Gift className="h-3 w-3 text-purple-400" />
+                              </div>
+                              <span className="text-purple-400 font-bold">{redemption.points}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center text-xforge-gray">
+                              <Clock className="h-4 w-4 mr-2" />
+                              {new Date(redemption.date).toLocaleDateString()}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+            ) : (
+              <Card className="backdrop-blur-lg border-white/10 bg-gradient-to-br from-[rgba(30,30,30,0.8)] to-[rgba(20,20,20,0.7)] shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-8 text-center">
+                <p className="text-xforge-gray">
+                  You haven't redeemed any promo codes yet.
+                </p>
+              </Card>
+            )}
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                step: 1,
-                title: "Find a Promo Code",
-                description: "Locate promo codes on product packaging, social media, or during XForge events.",
-                color: "from-purple-500/20 to-purple-600/5",
-                textColor: "text-purple-400"
-              },
-              {
-                step: 2,
-                title: "Enter Your Code",
-                description: "Submit your promo code in the form above to validate it and claim your reward.",
-                color: "from-xforge-teal/20 to-teal-600/5",
-                textColor: "text-xforge-teal"
-              },
-              {
-                step: 3,
-                title: "Earn Rewards",
-                description: "Successfully redeemed codes add points to your account which can be used for exclusive rewards.",
-                color: "from-amber-500/20 to-amber-600/5",
-                textColor: "text-amber-400"
-              }
-            ].map((item, index) => (
-              <div 
-                key={index} 
-                className="glass-dark rounded-xl p-8 text-center shadow-lg border border-xforge-teal/10 hover:border-xforge-teal/30 transition-all duration-300 group card-3d animate-float"
-                style={{animationDelay: `${index * 0.2}s`}}
-              >
-                <div className={`w-16 h-16 bg-gradient-to-br ${item.color} rounded-full flex items-center justify-center mx-auto mb-6 group-hover:shadow-glow transition-all duration-500`}>
-                  <span className={`${item.textColor} font-bold text-2xl`}>{item.step}</span>
-                </div>
-                <h3 className="text-white font-bold text-xl mb-3">{item.title}</h3>
-                <p className="text-xforge-gray">
-                  {item.description}
-                </p>
+          {/* How It Works Section - Visual flow with steps */}
+          <div className="max-w-5xl mx-auto">
+            <div className="flex items-center mb-12">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-xforge-teal/20 to-transparent border border-xforge-teal/20 mr-4">
+                <BadgePercent className="h-6 w-6 text-xforge-teal" />
               </div>
-            ))}
+              <h2 className="text-3xl font-bold">
+                <span className="text-white">How It</span>{" "}
+                <span className="text-xforge-teal">Works</span>
+              </h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  step: 1,
+                  title: "Find a Promo Code",
+                  description: "Locate promo codes on product packaging, social media, or during XForge events.",
+                  icon: <BookOpen className="h-6 w-6" />,
+                  color: "from-purple-500/20 to-purple-500/5",
+                  iconColor: "text-purple-400",
+                  borderColor: "border-purple-500/20",
+                  delay: "0s"
+                },
+                {
+                  step: 2,
+                  title: "Enter Your Code",
+                  description: "Submit your promo code in the form above to validate it and claim your reward.",
+                  icon: <Tag className="h-6 w-6" />,
+                  color: "from-xforge-teal/20 to-xforge-teal/5",
+                  iconColor: "text-xforge-teal",
+                  borderColor: "border-xforge-teal/20",
+                  delay: "0.2s"
+                },
+                {
+                  step: 3,
+                  title: "Earn Rewards",
+                  description: "Successfully redeemed codes add points to your account which can be used for exclusive rewards.",
+                  icon: <Gift className="h-6 w-6" />,
+                  color: "from-amber-500/20 to-amber-500/5",
+                  iconColor: "text-amber-400",
+                  borderColor: "border-amber-500/20",
+                  delay: "0.4s"
+                }
+              ].map((item, index) => (
+                <Card 
+                  key={index}
+                  className={`backdrop-blur-lg bg-gradient-to-br from-[rgba(30,30,30,0.8)] to-[rgba(20,20,20,0.7)] border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-8 hover:translate-y-[-5px] transition-all duration-300 animate-float`}
+                  style={{ animationDelay: item.delay }}
+                >
+                  <div className="text-center">
+                    <div className={`w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br ${item.color} ${item.borderColor} border flex items-center justify-center`}>
+                      <span className={`${item.iconColor} font-bold text-2xl`}>{item.step}</span>
+                    </div>
+                    <h3 className="text-white font-bold text-xl mb-3">{item.title}</h3>
+                    <p className="text-xforge-gray">
+                      {item.description}
+                    </p>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </main>
