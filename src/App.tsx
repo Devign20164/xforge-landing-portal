@@ -15,6 +15,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import NotFound from "./pages/NotFound";
 import RetailersLanding from "./pages/RetailersLanding";
+import VerificationSuccess from "./pages/VerificationSuccess";
 import { NotificationsProvider } from "./context/NotificationsContext";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/rewards" element={<Rewards />} />
             <Route path="/account" element={<AccountSettings />} />
             <Route path="/retailers" element={<RetailersLanding />} />
+            <Route path="/verification-success" element={<VerificationSuccess />} />
             {/* Admin routes */}
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={
