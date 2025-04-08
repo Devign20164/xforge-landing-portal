@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -23,7 +22,6 @@ const PromoCodes: React.FC = () => {
   const [activeTab, setActiveTab] = useState("promos");
 
   useEffect(() => {
-    // Add a notification when visiting the promo codes page for the first time
     const hasVisitedPromos = localStorage.getItem('visited-promos');
     if (!hasVisitedPromos) {
       setTimeout(() => {
@@ -36,7 +34,6 @@ const PromoCodes: React.FC = () => {
       }, 2000);
     }
 
-    // Flash promo countdown timer
     const timer = setInterval(() => {
       setFlashTimeRemaining(prev => {
         if (prev <= 0) return 0;
@@ -47,7 +44,6 @@ const PromoCodes: React.FC = () => {
     return () => clearInterval(timer);
   }, [addNotification]);
 
-  // Format time remaining for display
   const formatTimeRemaining = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -55,7 +51,6 @@ const PromoCodes: React.FC = () => {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Mock active promo codes
   const validPromoCodes = ["XFORGE10", "SUMMER25", "WELCOME15", "XFORGE25", "FLASH50", "RAFFLE10"];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -72,12 +67,10 @@ const PromoCodes: React.FC = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call
     setTimeout(() => {
       if (validPromoCodes.includes(promoCode.toUpperCase())) {
         setStatus("success");
         
-        // Special handling for FLASH50 and RAFFLE10 codes
         if (promoCode.toUpperCase() === "FLASH50") {
           toast.success("Flash Promo code applied successfully!", {
             description: "50% discount applied to your next purchase!",
@@ -103,7 +96,6 @@ const PromoCodes: React.FC = () => {
             type: "points"
           });
         } else {
-          // Regular promo code
           toast.success("Promo code applied successfully!", {
             description: "Points have been added to your account!",
             position: "top-center",
@@ -126,13 +118,11 @@ const PromoCodes: React.FC = () => {
     }, 1500);
   };
 
-  // Reset form when changing status back to idle
   const resetForm = () => {
     setPromoCode("");
     setStatus("idle");
   };
 
-  // Recent promo redemptions
   const recentRedemptions = [
     { id: 1, code: "SUMMER25", points: 250, date: "2023-06-10" },
     { id: 2, code: "XFORGE10", points: 100, date: "2023-05-22" },
@@ -140,14 +130,12 @@ const PromoCodes: React.FC = () => {
     { id: 4, code: "RAFFLE10", points: 0, date: "2023-07-01", special: "1 Raffle Entry" }
   ];
 
-  // Featured promo codes
   const featuredCodes = [
     { code: "XFORGE25", discount: "25% OFF", expiry: "July 30, 2023", description: "25% off your next purchase" },
     { code: "POINTS100", discount: "100 POINTS", expiry: "August 15, 2023", description: "Get 100 bonus points with any purchase" },
     { code: "FREESHIP", discount: "FREE SHIPPING", expiry: "Limited time", description: "Free shipping on orders over $50" }
   ];
 
-  // Flash promos with countdown
   const flashPromos = [
     {
       id: 1,
@@ -161,7 +149,6 @@ const PromoCodes: React.FC = () => {
     }
   ];
 
-  // Raffle details
   const raffles = [
     {
       id: 1,
@@ -187,7 +174,6 @@ const PromoCodes: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-xforge-dark to-black overflow-hidden relative">
-      {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/6 w-64 h-64 rounded-full bg-xforge-teal/5 blur-3xl animate-float" style={{ animationDelay: "0s" }}></div>
         <div className="absolute top-2/3 right-1/5 w-96 h-96 rounded-full bg-purple-500/5 blur-3xl animate-float" style={{ animationDelay: "2s" }}></div>
@@ -197,7 +183,6 @@ const PromoCodes: React.FC = () => {
       <Header />
       <main className="flex-grow py-20">
         <div className="container px-4 mx-auto">
-          {/* Hero Section with Improved Typography and Visual Hierarchy */}
           <div className="max-w-3xl mx-auto text-center mb-16">
             <div className="inline-flex items-center justify-center mb-6">
               <div className="relative">
@@ -222,12 +207,11 @@ const PromoCodes: React.FC = () => {
             </p>
           </div>
 
-          {/* Tabs for different sections */}
           <div className="max-w-6xl mx-auto mb-12">
             <Tabs defaultValue="promos" className="w-full" onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-3 mb-8 bg-xforge-dark/60 border border-white/10 p-1">
                 <TabsTrigger value="promos" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-xforge-teal/20 data-[state=active]:to-xforge-teal/5 data-[state=active]:text-xforge-teal">
-                  <TagIcon className="h-4 w-4 mr-2" />
+                  <Tag className="h-4 w-4 mr-2" />
                   Promo Codes
                 </TabsTrigger>
                 <TabsTrigger value="flash" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500/20 data-[state=active]:to-pink-500/5 data-[state=active]:text-pink-400">
@@ -240,9 +224,7 @@ const PromoCodes: React.FC = () => {
                 </TabsTrigger>
               </TabsList>
 
-              {/* Promo Codes Content */}
               <TabsContent value="promos" className="mt-0">
-                {/* Featured Codes Section - Now with a premium card design */}
                 <div className="max-w-7xl mx-auto mb-20">
                   <div className="flex items-center mb-12">
                     <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500/20 to-transparent border border-amber-500/20 mr-4">
@@ -254,12 +236,10 @@ const PromoCodes: React.FC = () => {
                     </h2>
                   </div>
                   
-                  {/* Premium card design with hover effects and glassmorphism */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {featuredCodes.map((promo, index) => (
                       <div key={index} className="group h-[280px] perspective-1000">
                         <div className="relative h-full w-full transition-all duration-700 transform-style-3d group-hover:rotate-y-180 rounded-2xl">
-                          {/* Card Front */}
                           <div className="absolute inset-0 backface-hidden rounded-2xl overflow-hidden glass-dark backdrop-blur-md border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-6 flex flex-col justify-between bg-gradient-to-br from-[rgba(30,30,30,0.9)] to-[rgba(20,20,20,0.8)]">
                             <div>
                               <div className="mb-6 p-3 rounded-lg bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20">
@@ -282,7 +262,6 @@ const PromoCodes: React.FC = () => {
                             </div>
                           </div>
                           
-                          {/* Card Back */}
                           <div className="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl overflow-hidden bg-gradient-to-br from-xforge-teal/30 to-[rgba(20,20,20,0.9)] backdrop-blur-lg border border-xforge-teal/30 p-6 flex flex-col items-center justify-center">
                             <div className="text-center space-y-6">
                               <div className="mx-auto p-3 rounded-full bg-xforge-teal/20 border border-xforge-teal/30">
@@ -314,9 +293,7 @@ const PromoCodes: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Redeem Code Section - Redesigned with modern UI */}
                 <div className="max-w-3xl mx-auto mb-24 relative">
-                  {/* Decorative lighting effects */}
                   <div className="absolute -top-20 -left-20 w-40 h-40 bg-xforge-teal/10 rounded-full blur-3xl"></div>
                   <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-xforge-teal/10 rounded-full blur-3xl"></div>
                   
@@ -427,7 +404,6 @@ const PromoCodes: React.FC = () => {
                   </Card>
                 </div>
 
-                {/* Recent Redemptions Section */}
                 <div className="max-w-4xl mx-auto mb-24">
                   <div className="flex items-center mb-12">
                     <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-transparent border border-purple-500/20 mr-4">
@@ -488,7 +464,6 @@ const PromoCodes: React.FC = () => {
                 </div>
               </TabsContent>
 
-              {/* Flash Deals Tab */}
               <TabsContent value="flash" className="mt-0">
                 <div className="max-w-5xl mx-auto mb-16">
                   <div className="flex items-center mb-12">
@@ -543,7 +518,7 @@ const PromoCodes: React.FC = () => {
                               <span>Participation progress</span>
                               <span>{Math.round((promo.participants / promo.maxParticipants) * 100)}%</span>
                             </div>
-                            <Progress value={(promo.participants / promo.maxParticipants) * 100} className="h-2 bg-xforge-dark/60" indicatorClassName="bg-gradient-to-r from-pink-600 to-purple-500" />
+                            <Progress value={(promo.participants / promo.maxParticipants) * 100} className="h-2 bg-xforge-dark/60" />
                           </div>
                           
                           <div className="flex gap-4">
@@ -616,7 +591,6 @@ const PromoCodes: React.FC = () => {
                 </div>
               </TabsContent>
 
-              {/* Raffles Tab */}
               <TabsContent value="raffle" className="mt-0">
                 <div className="max-w-5xl mx-auto mb-16">
                   <div className="flex items-center mb-12">
@@ -733,4 +707,3 @@ const PromoCodes: React.FC = () => {
 };
 
 export default PromoCodes;
-
